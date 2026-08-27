@@ -14,6 +14,16 @@
       "sha256": "f8c06b36e17280e14375ab136055e335fad440ffb8b5bd0794176b3f28686c1f"
     },
     {
+      "source": "skills/jp-merge-claude-branches/SKILL.md",
+      "target": ".claude/skills/jp-merge-claude-branches/SKILL.md",
+      "sha256": "e2a480d02ff073ea92ee782968dd2f2062bf34ca18062a0756654e00c82e26e3"
+    },
+    {
+      "source": "skills/jp-reintegrate-master/SKILL.md",
+      "target": ".claude/skills/jp-reintegrate-master/SKILL.md",
+      "sha256": "871676ccd77d671cd457d9711a90c901b49659658b77514c0c4e6d9f92471065"
+    },
+    {
       "source": "skills/jp-update-virtual-jp/SKILL.md",
       "target": ".claude/skills/jp-update-virtual-jp/SKILL.md",
       "sha256": "26fdbc65c6041e8ce06b44b9cdbfa6bff079385660f25b4d7f84d0a13146c1f4"
