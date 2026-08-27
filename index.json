@@ -4,29 +4,29 @@
   "targetRoot": ".claude",
   "files": [
     {
-      "source": "skills/jp-brainstorming/SKILL.md",
-      "target": ".claude/skills/jp-brainstorming/SKILL.md",
-      "sha256": "d17ca13ea04e16a0d1820ff1734bba303273f96f214cfab6ab46fd83fc250c2c"
+      "source": "skills/vjp-brainstorming/SKILL.md",
+      "target": ".claude/skills/vjp-brainstorming/SKILL.md",
+      "sha256": "2a6c81a3bf8402ae6d3391e309e2c3cf4f75b510ed91e52101b160cd03e08524"
     },
     {
-      "source": "skills/jp-implement-spec/SKILL.md",
-      "target": ".claude/skills/jp-implement-spec/SKILL.md",
-      "sha256": "4af8344ecfce642268df646aceab778014b7146675b7b976afb31408f799e1c9"
+      "source": "skills/vjp-implement-spec/SKILL.md",
+      "target": ".claude/skills/vjp-implement-spec/SKILL.md",
+      "sha256": "49caeffb55a5db191175ea992cf53c22e2390c5e5b12d3ede6af4d52a5ffb7ca"
     },
     {
-      "source": "skills/jp-merge-claude-branches/SKILL.md",
-      "target": ".claude/skills/jp-merge-claude-branches/SKILL.md",
-      "sha256": "e2a480d02ff073ea92ee782968dd2f2062bf34ca18062a0756654e00c82e26e3"
+      "source": "skills/vjp-merge-claude-branches/SKILL.md",
+      "target": ".claude/skills/vjp-merge-claude-branches/SKILL.md",
+      "sha256": "e214f804f07fe0a5d535f7e7bb579fc8071eaf228d77c90a9ca66a89c5b19b47"
     },
     {
-      "source": "skills/jp-reintegrate-master/SKILL.md",
-      "target": ".claude/skills/jp-reintegrate-master/SKILL.md",
-      "sha256": "871676ccd77d671cd457d9711a90c901b49659658b77514c0c4e6d9f92471065"
+      "source": "skills/vjp-reintegrate-master/SKILL.md",
+      "target": ".claude/skills/vjp-reintegrate-master/SKILL.md",
+      "sha256": "a812a84b1eed72bc716dd77f3792bc8ee8eecde4ba9d3cdceb6457b6e4a8eb1b"
     },
     {
-      "source": "skills/jp-update-virtual-jp/SKILL.md",
-      "target": ".claude/skills/jp-update-virtual-jp/SKILL.md",
-      "sha256": "26fdbc65c6041e8ce06b44b9cdbfa6bff079385660f25b4d7f84d0a13146c1f4"
+      "source": "skills/vjp-update-virtual-jp/SKILL.md",
+      "target": ".claude/skills/vjp-update-virtual-jp/SKILL.md",
+      "sha256": "7527bdf9b4dcfad84ea147e82728496de3e1913075095290fd9c3959f1833261"
     }
   ]
 }

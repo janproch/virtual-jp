@@ -28,12 +28,16 @@ no application code - the deliverable is the skill instructions themselves.
 - Instructions are imperative and addressed to the agent running the skill.
 - ASCII only, present tense.
 - A skill stands alone: it may reference another skill by name, but must not require it.
-- Every skill directory is named `jp-*`. This is not cosmetic: `jp-update-virtual-jp`
+- Every skill directory is named `vjp-*`. This is not cosmetic: `vjp-update-virtual-jp`
   installs skills into a calling repository's `.claude/` and removes what this repository
-  no longer ships by sweeping every `jp-*` entry there, with no record of the previous
-  install to consult. A shipped file whose target carries no `jp-` prefixed component
+  no longer ships by sweeping every `vjp-*` entry there, with no record of the previous
+  install to consult. A shipped file whose target carries no `vjp-` prefixed component
   directly inside a `.claude/` directory could never be removed again, so
   `scripts/build-index.py` refuses to put one in the manifest.
+- The prefix used to be `jp-`. The sweep in `vjp-update-virtual-jp` still removes `jp-*`
+  entries as well, so a repository vendored before the rename does not end up carrying
+  both copies of every skill. That legacy half of the sweep goes away once no vendored
+  repository can still be on the old names.
 
 ## Checks
 

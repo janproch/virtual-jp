@@ -22,7 +22,7 @@ INDEX = ROOT / "index.json"
 PLUGIN = ROOT / ".claude-plugin" / "plugin.json"
 
 TARGET_ROOT = ".claude"
-PREFIX = "jp-"
+PREFIX = "vjp-"
 
 
 def sha256(path):
@@ -33,7 +33,7 @@ def check_target(target):
     """Enforce the naming rule the calling repository's cleanup depends on.
 
     An update removes virtual-jp's files by name alone: it sweeps every
-    jp-* entry directly inside .claude/ or inside one of its subdirectories.
+    vjp-* entry directly inside .claude/ or inside one of its subdirectories.
     A target that carries no such component could never be removed again, so
     it is rejected here rather than shipped.
     """

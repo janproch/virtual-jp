@@ -1,5 +1,5 @@
 ---
-name: jp-reintegrate-master
+name: vjp-reintegrate-master
 description: Merge the freshly fetched main branch (master/main, whatever the repository uses) into the current feature branch, resolve the conflicts, verify the result and commit the merge. Never pushes. Use ONLY when the user explicitly asks for it ("reintegrate master", "reintegrate the main branch", "catch this branch up with master", "sync with master", "use the reintegrate master skill"). A branch that merely looks behind, a pull request that needs updating, or a request to rebase, squash or push is not an invocation.
 ---
 
@@ -43,7 +43,7 @@ git log --oneline "HEAD..origin/$MAIN"
 
 Always merge `origin/$MAIN`, never the local ref - the local one is usually stale and
 produces a branch that looks reintegrated but is not. (The exception is a caller like
-`jp-merge-claude-branches` that has just advanced the local branch itself; then merge
+`vjp-merge-claude-branches` that has just advanced the local branch itself; then merge
 that.) If the log is empty the branch is already up to date - say so and stop.
 
 ## 3. Merge and resolve

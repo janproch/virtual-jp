@@ -1,11 +1,11 @@
 ---
-name: jp-update-virtual-jp
-description: Refresh this repository's vendored copies of JP's virtual-jp skills - clone janproch/virtual-jp, install every file its index.json ships into .claude/, remove the jp-* entries it no longer ships, and commit the result. Use ONLY when the user explicitly asks for it ("update virtual JP", "update the virtual-jp skills", "use the virtual-jp update skill"). A request to update dependencies, packages or the project's own documentation is not an invocation, and neither is a complaint about how a jp-* skill behaves.
+name: vjp-update-virtual-jp
+description: Refresh this repository's vendored copies of JP's virtual-jp skills - clone janproch/virtual-jp, install every file its index.json ships into .claude/, remove the vjp-* entries it no longer ships, and commit the result. Use ONLY when the user explicitly asks for it ("update virtual JP", "update the virtual-jp skills", "use the virtual-jp update skill"). A request to update dependencies, packages or the project's own documentation is not an invocation, and neither is a complaint about how a vjp-* skill behaves.
 ---
 
 # Update the vendored virtual-jp skills
 
-This skill refreshes the copies of JP's `jp-*` skills that live in **this** repository's
+This skill refreshes the copies of JP's `vjp-*` skills that live in **this** repository's
 `.claude/` directory, from `https://github.com/janproch/virtual-jp`.
 
 `index.json` in that repository is the only authority on what gets installed and where.
@@ -13,9 +13,10 @@ A file that is in the clone but not in the manifest is not installed; a file tha
 the manifest is installed exactly at the target path the manifest gives it.
 
 The calling repository keeps **no record** of a previous update - no lock file, no
-receipt. Removal works by name instead: everything virtual-jp ships is named `jp-*`
-directly inside a `.claude/` directory, so sweeping those entries and writing the
-manifest back is what makes a dropped skill disappear.
+receipt. Removal works by name instead: everything virtual-jp ships is named `vjp-*`
+directly inside a `.claude/` directory, so sweeping those entries - and the `jp-*` ones
+an older virtual-jp shipped under - and writing the manifest back is what makes a dropped
+skill disappear.
 
 ## Hard rules
 
@@ -94,8 +95,8 @@ no pinning; the short commit is what the commit message records.
 Read `$tmp/virtual-jp/index.json` and check **every** entry before touching anything:
 
 - `target` starts with `.claude/`, is relative, and has no `..` component
-- `target` has a `jp-` prefixed component directly inside a `.claude/` directory - that
-  is `.claude/jp-<something>` or `.claude/<dir>/jp-<something>`
+- `target` has a `vjp-` prefixed component directly inside a `.claude/` directory - that
+  is `.claude/vjp-<something>` or `.claude/<dir>/vjp-<something>`
 - `source` exists in the clone
 
 Anything fails - remove `$tmp`, stop, and report which entry and why. Nothing has been
@@ -104,12 +105,18 @@ deleted at that point, which is the reason this check comes first.
 ## 4. Sweep
 
 ```bash
-find .claude -maxdepth 2 -name 'jp-*'
+find .claude -maxdepth 2 \( -name 'vjp-*' -o -name 'jp-*' \)
 ```
 
 Remove every result. Depth 1 and 2 only, which is exactly the range the naming rule
 covers. This is the whole removal mechanism: a skill virtual-jp has dropped is not in the
 manifest, so it is not written back, so it is gone.
+
+The `jp-*` half of that pattern is the legacy namespace: virtual-jp shipped these skills
+under `jp-*` before the rename to `vjp-*`. A repository vendored back then still carries
+those directories, and nothing in the new manifest overwrites them, so the sweep is the
+only thing that stops the old copy of a skill sitting beside its renamed twin. Keep the
+pattern until no vendored repository can still be on the old names.
 
 ## 5. Install
 
