@@ -2,7 +2,8 @@
 
 Software development skill set by JP - a collection of [Claude Code](https://claude.com/claude-code)
 skills that split a change into two explicit phases: decide it with the user, then build
-exactly what was decided.
+exactly what was decided. Alongside them are the skills that keep the result flowing
+between branches.
 
 The two phases are deliberately separate. Planning produces one document and no code;
 implementation reads that document, treats its decisions as settled, and writes down what
@@ -15,8 +16,10 @@ really happened.
 | [`jp-brainstorming`](skills/jp-brainstorming/SKILL.md) | plan | Gathers context, settles every important decision with the user one question at a time, and writes `docs/specs/YYYY-MM-DD-feature-name.md`. Produces no code. |
 | [`jp-implement-spec`](skills/jp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, and writes `docs/impl/YYYY-MM-DD-feature-name.md`. |
 | [`jp-update-virtual-jp`](skills/jp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits the result. |
+| [`jp-reintegrate-master`](skills/jp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. Never pushes. |
+| [`jp-merge-claude-branches`](skills/jp-merge-claude-branches/SKILL.md) | integrate | Lists unmerged `claude/*` branches from the last two weeks, asks which to land, then for each one merges the main branch in, verifies it, and merges it back. |
 
-All three are invoked explicitly. None starts on its own from an ordinary feature
+All of them are invoked explicitly. None starts on its own from an ordinary feature
 request.
 
 ## Install
