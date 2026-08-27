@@ -1,5 +1,5 @@
 ---
-name: jp-brainstorming
+name: vjp-brainstorming
 description: Lead the user through high-level planning of a change - gather context, settle every important decision with AskUserQuestion, then write a specification to docs/specs/YYYY-MM-DD-feature-name.md. Use ONLY when the user explicitly asks for it ("brainstorm", "brainstorming", "use the brainstorming skill", "let's brainstorm this"). Never start it on your own from an ordinary feature request.
 ---
 

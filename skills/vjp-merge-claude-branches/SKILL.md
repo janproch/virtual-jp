@@ -1,5 +1,5 @@
 ---
-name: jp-merge-claude-branches
+name: vjp-merge-claude-branches
 description: Find unmerged claude/* branches with commits in the last two weeks, ask the user which ones to land, then for each chosen branch merge the main branch into it, verify it, and merge it back. Use ONLY when the user explicitly asks for it ("merge claude branches", "use the merge claude branches skill", "land the claude branches", "clear the claude/* backlog"). A request to merge one named branch, to open or update a pull request, or to catch the current branch up with master is not an invocation.
 ---
 
@@ -84,7 +84,7 @@ ref is already out of date. Resolve every conflict by hand, keeping both sides'
 intentions rather than taking one wholesale; regenerate lockfiles and other generated
 artifacts from the resolved inputs instead of hand-merging them; leave no conflict
 marker behind (`git diff --check`); and honour the invariants the repository's own
-docs state for the files touched. The `jp-reintegrate-master` skill spells the same
+docs state for the files touched. The `vjp-reintegrate-master` skill spells the same
 rules out in more detail if it is installed. Then run the build and test commands
 from step 1.
 

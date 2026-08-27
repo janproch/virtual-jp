@@ -1,5 +1,5 @@
 ---
-name: jp-implement-spec
+name: vjp-implement-spec
 description: Implement an agreed specification from docs/specs/ - pick the spec, carry out its plan and its decisions in code, then write implementation notes to docs/impl/YYYY-MM-DD-feature-name.md. Use ONLY when the user explicitly points at a spec ("implement spec", "implement the spec", "implement the plan from the brainstorming session"). A bare "implement this" or "start implementation" with no spec named is not an invocation.
 ---
 
@@ -7,7 +7,7 @@ description: Implement an agreed specification from docs/specs/ - pick the spec,
 
 This skill runs the **execution phase** of a change that has already been planned.
 The plan is a document under `docs/specs/`, normally written by the
-`jp-brainstorming` skill. This skill turns exactly that document into code, and
+`vjp-brainstorming` skill. This skill turns exactly that document into code, and
 records what really happened in `docs/impl/`.
 
 The spec is the authority. Its **Decisions** and **Architecture decisions** were
