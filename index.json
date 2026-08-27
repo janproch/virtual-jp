@@ -6,12 +6,12 @@
     {
       "source": "skills/jp-brainstorming/SKILL.md",
       "target": ".claude/skills/jp-brainstorming/SKILL.md",
-      "sha256": "c1ce8a3838f7bfc08b0114e81310bb358c33e4f6e5cda600840bb25b43fb75cf"
+      "sha256": "d17ca13ea04e16a0d1820ff1734bba303273f96f214cfab6ab46fd83fc250c2c"
     },
     {
       "source": "skills/jp-implement-spec/SKILL.md",
       "target": ".claude/skills/jp-implement-spec/SKILL.md",
-      "sha256": "f8c06b36e17280e14375ab136055e335fad440ffb8b5bd0794176b3f28686c1f"
+      "sha256": "4af8344ecfce642268df646aceab778014b7146675b7b976afb31408f799e1c9"
     },
     {
       "source": "skills/jp-merge-claude-branches/SKILL.md",
