@@ -1,2 +1,2 @@
 # virtual-jp
-Claude software development skill set by JP
+Software development skill set by JP
