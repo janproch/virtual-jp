@@ -172,3 +172,9 @@ and do not offer to start it in the same breath as the summary.
 
 If the change is being tracked on a branch, commit the spec on its own, with a
 message naming the feature. A spec never rides along in a code commit.
+
+**The branch name must contain the feature name** - the same
+`feature-name` slug used in `docs/specs/YYYY-MM-DD-feature-name.md`. If the session
+is on a branch whose name does not carry it (a generic `claude/*` name, or the main
+branch), create one that does before committing the spec, and say which branch the
+spec landed on.

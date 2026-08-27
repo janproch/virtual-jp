@@ -29,6 +29,10 @@ settled with the user and are not reopened here.
   notes are written, and their real outcome goes in the notes.
 - **The notes file is part of the work, not an optional extra.** An implementation
   without `docs/impl/YYYY-MM-DD-feature-name.md` is unfinished.
+- **A follow-up request updates the notes, in the same turn.** Every change asked
+  for after the first hand-back is merged into the existing notes and listed under
+  *Follow-up changes* - see step 7. Notes that stop at the first hand-back describe
+  a version of the feature that no longer exists.
 
 ## 1. Choose the spec
 
@@ -122,6 +126,14 @@ A few lines or bullets: what now exists that did not before, and where it lives.
 Name the modules and the key files, not every file touched - the diff is the
 detail. Say which checks were run and what they reported.
 
+## Follow-up changes
+
+Only once the user has asked for a change after the spec was implemented. Omit the
+section entirely until then. One numbered entry per request, oldest first: the ask
+reformulated in one line, then one or two sentences on how it was built. Nothing
+else - the diff is the detail, and *Recommended follow-ups* below is for work
+nobody has asked for.
+
 ## What is missing
 
 Everything the spec asked for that is not in the code, and why - deferred,
@@ -158,9 +170,33 @@ implementation was rough; that asymmetry is the point.
 ## 6. Commit and hand back
 
 Commit the implementation on the branch the session is working on, in the phases it
-was built in where that reads better than one commit. Then commit the notes on
+was built in where that reads better than one commit. **The branch name must contain
+the feature name** - the same `feature-name` slug as the spec file
+`docs/specs/YYYY-MM-DD-feature-name.md`. If the current branch does not carry it (a
+generic `claude/*` name, or the main branch), create one that does before the first
+commit, and name that branch when handing back. Then commit the notes on
 their own, `docs: implementation notes for <feature name>`. Push per the
 repository's rules.
 
 Report: the spec, the notes path, what was left undone in one line, and the state
 of the checks. Do not restate the changelog - it is in the file.
+
+## 7. A follow-up request updates the notes
+
+The notes are the record of what was built, so they do not stop at the first hand-back.
+**Every change the user asks for afterwards, in this session or a later one, is merged
+into `docs/impl/YYYY-MM-DD-feature-name.md` as part of doing it** - not left for a
+tidy-up pass, and not written only into the commit message.
+
+Merging means all of:
+
+- the existing sections absorb it - `What was done` describes what now exists, and
+  `Known problems`, `What is missing` and the `Changelog` gain or lose whatever the
+  change moved
+- **`Follow-up changes` gains a numbered entry**: the request reformulated in one
+  line, plus one or two sentences on how it was built
+- the same checks are run again, and the notes say so
+
+Keep the file a page. A follow-up that turns out to be a change of the spec's own
+decisions is not a follow-up - say so, and ask whether the spec should be revised
+first.
