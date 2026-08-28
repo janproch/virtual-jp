@@ -194,4 +194,4 @@ spec is written but not pushed and let the user say where it should go - do not
 invent a branch for it.
 
 The implementation phase is what cuts a branch, from a main branch that already
-carries this spec - `vjp-implement-spec` names it `claude/<feature-name>`.
+carries this spec - `vjp-implement-spec` names it `claude/<feature-name>-<hash>`.

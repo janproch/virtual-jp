@@ -106,16 +106,13 @@ before it:
 
 ```bash
 git switch "$MAIN"
-git switch -c <branch>
+git switch -c "claude/<feature-name>-$(openssl rand -hex 3)"
 ```
 
-The branch is **`claude/<feature-name>`**, the spec's own slug - that is
-`vjp-implement-spec`'s rule, and a name describing the activity rather than the
-feature (`claude/spec-implementation-a1b2c3` and the like) is not it. Follow the
-repository's branch naming convention instead where it has one that says otherwise.
-If a branch of that name already exists, locally or on the remote, append a `-` and
-six random hex characters - `claude/<feature-name>-a1b2c3`, the snippet in
-`vjp-implement-spec` step 6 - and say so in the report.
+The branch is **`claude/<feature-name>-<hash>`**, the spec's slug plus six random hex
+characters - that is `vjp-implement-spec`'s rule. Follow the repository's branch
+naming convention instead where it has one that says otherwise, and report the full
+branch name per spec.
 
 ### 4b. Hand the spec to a subagent
 
