@@ -169,14 +169,22 @@ implementation was rough; that asymmetry is the point.
 
 ## 6. Commit and hand back
 
-Commit the implementation on the branch the session is working on, in the phases it
-was built in where that reads better than one commit. **The branch name must contain
-the feature name** - the same `feature-name` slug as the spec file
-`docs/specs/YYYY-MM-DD-feature-name.md`. If the current branch does not carry it (a
-generic `claude/*` name, or the main branch), create one that does before the first
-commit, and name that branch when handing back. Then commit the notes on
-their own, `docs: implementation notes for <feature name>`. Push per the
-repository's rules.
+The work goes on a branch of its own, named for the feature and cut before the first
+commit. **The branch is `claude/<feature-name>-<hash>`** - the `feature-name` slug of
+the spec file `docs/specs/YYYY-MM-DD-feature-name.md`, then six random hex characters
+so the name is free whoever else is working. A session-generated name
+(`claude/spec-implementation-a1b2c3` and the like) describes the activity, not the
+feature, and is never kept. Follow the repository's own branch naming convention
+instead where it has one that says otherwise.
+
+```bash
+git switch -c "claude/<feature-name>-$(openssl rand -hex 3)"
+```
+
+Commit the implementation there, in the phases it was built in where that reads
+better than one commit. Then commit the notes on their own, `docs: implementation
+notes for <feature name>`. Push per the repository's rules, and name the branch when
+handing back.
 
 Report: the spec, the notes path, what was left undone in one line, and the state
 of the checks. Do not restate the changelog - it is in the file.

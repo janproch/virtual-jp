@@ -6,12 +6,12 @@
     {
       "source": "skills/vjp-brainstorming/SKILL.md",
       "target": ".claude/skills/vjp-brainstorming/SKILL.md",
-      "sha256": "2a6c81a3bf8402ae6d3391e309e2c3cf4f75b510ed91e52101b160cd03e08524"
+      "sha256": "12e1c48611dc0655ff877073838da9ed4ee349ac8c80edcd44544a2ed0c5e246"
     },
     {
       "source": "skills/vjp-implement-spec/SKILL.md",
       "target": ".claude/skills/vjp-implement-spec/SKILL.md",
-      "sha256": "49caeffb55a5db191175ea992cf53c22e2390c5e5b12d3ede6af4d52a5ffb7ca"
+      "sha256": "2c93c897f40867b3e288604250b809552505f05b2b168989374a865c3ba35d61"
     },
     {
       "source": "skills/vjp-merge-claude-branches/SKILL.md",
@@ -21,7 +21,7 @@
     {
       "source": "skills/vjp-night-worker/SKILL.md",
       "target": ".claude/skills/vjp-night-worker/SKILL.md",
-      "sha256": "c7bf04aed21a00fb8710a46ea4e653cfb34ccf33df68213bcc1601f32e788b57"
+      "sha256": "47bd99b5bf72d1c8f96f332baaa9d5c00a260a764577b8e83478b7a16b9cd6f4"
     },
     {
       "source": "skills/vjp-reintegrate-master/SKILL.md",
