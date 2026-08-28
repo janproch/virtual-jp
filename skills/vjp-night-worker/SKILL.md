@@ -109,10 +109,11 @@ git switch "$MAIN"
 git switch -c <branch>
 ```
 
-The branch name **must contain the spec's `feature-name` slug** - that is
-`vjp-implement-spec`'s own rule. Follow the repository's branch naming convention if
-it has one, otherwise `claude/<feature-name>`. If the name is taken, add a numeric
-suffix and say so in the report.
+The branch is **`claude/<feature-name>`**, the spec's own slug - that is
+`vjp-implement-spec`'s rule, and a name describing the activity rather than the
+feature (`claude/spec-implementation-a1b2c3` and the like) is not it. Follow the
+repository's branch naming convention instead where it has one that says otherwise.
+If the name is taken, add a numeric suffix and say so in the report.
 
 ### 4b. Hand the spec to a subagent
 

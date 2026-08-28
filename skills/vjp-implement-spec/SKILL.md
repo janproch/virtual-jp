@@ -169,14 +169,27 @@ implementation was rough; that asymmetry is the point.
 
 ## 6. Commit and hand back
 
-Commit the implementation on the branch the session is working on, in the phases it
-was built in where that reads better than one commit. **The branch name must contain
-the feature name** - the same `feature-name` slug as the spec file
-`docs/specs/YYYY-MM-DD-feature-name.md`. If the current branch does not carry it (a
-generic `claude/*` name, or the main branch), create one that does before the first
-commit, and name that branch when handing back. Then commit the notes on
-their own, `docs: implementation notes for <feature name>`. Push per the
-repository's rules.
+The work goes on a branch named for the feature. **The branch is
+`claude/<feature-name>`** - the `feature-name` slug of the spec file
+`docs/specs/YYYY-MM-DD-feature-name.md`, character for character, and nothing else.
+Follow the repository's own branch naming convention instead where it has one that
+says otherwise.
+
+A session-generated name is not that branch. `claude/spec-implementation-a1b2c3`,
+`claude/implement-spec-xxxx` and every other name that describes the activity rather
+than the feature tells a later reader nothing about what is on the branch - so if the
+current branch is one of those, a generic `claude/*` name, or the main branch, create
+`claude/<feature-name>` from it before the first commit. If that name is taken by an
+unrelated branch, add a numeric suffix and say so when handing back.
+
+```bash
+git switch -c claude/<feature-name>
+```
+
+Commit the implementation there, in the phases it was built in where that reads
+better than one commit. Then commit the notes on their own, `docs: implementation
+notes for <feature name>`. Push per the repository's rules, and name the branch when
+handing back.
 
 Report: the spec, the notes path, what was left undone in one line, and the state
 of the checks. Do not restate the changelog - it is in the file.
