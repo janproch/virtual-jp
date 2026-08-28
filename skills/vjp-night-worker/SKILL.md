@@ -113,7 +113,9 @@ The branch is **`claude/<feature-name>`**, the spec's own slug - that is
 `vjp-implement-spec`'s rule, and a name describing the activity rather than the
 feature (`claude/spec-implementation-a1b2c3` and the like) is not it. Follow the
 repository's branch naming convention instead where it has one that says otherwise.
-If the name is taken, add a numeric suffix and say so in the report.
+If a branch of that name already exists, locally or on the remote, append a `-` and
+six random hex characters - `claude/<feature-name>-a1b2c3`, the snippet in
+`vjp-implement-spec` step 6 - and say so in the report.
 
 ### 4b. Hand the spec to a subagent
 

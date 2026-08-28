@@ -171,19 +171,30 @@ implementation was rough; that asymmetry is the point.
 
 The work goes on a branch named for the feature. **The branch is
 `claude/<feature-name>`** - the `feature-name` slug of the spec file
-`docs/specs/YYYY-MM-DD-feature-name.md`, character for character, and nothing else.
-Follow the repository's own branch naming convention instead where it has one that
-says otherwise.
+`docs/specs/YYYY-MM-DD-feature-name.md`, character for character, and nothing after
+it unless the name is already taken. Follow the repository's own branch naming
+convention instead where it has one that says otherwise.
 
 A session-generated name is not that branch. `claude/spec-implementation-a1b2c3`,
 `claude/implement-spec-xxxx` and every other name that describes the activity rather
 than the feature tells a later reader nothing about what is on the branch - so if the
 current branch is one of those, a generic `claude/*` name, or the main branch, create
-`claude/<feature-name>` from it before the first commit. If that name is taken by an
-unrelated branch, add a numeric suffix and say so when handing back.
+`claude/<feature-name>` from it before the first commit.
+
+**If a branch of that name already exists**, locally or on the remote, and it is not
+this session's own work to continue, append a `-` and six random hex characters:
+`claude/<feature-name>-a1b2c3`. A hash, never a counter - two sessions picking a
+suffix at the same time must not land on the same name. Say the full branch name when
+handing back, and why it carries a suffix.
 
 ```bash
-git switch -c claude/<feature-name>
+branch=claude/<feature-name>
+git fetch origin
+if git show-ref --verify --quiet "refs/heads/$branch" \
+   || git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+  branch="$branch-$(openssl rand -hex 3)"
+fi
+git switch -c "$branch"
 ```
 
 Commit the implementation there, in the phases it was built in where that reads

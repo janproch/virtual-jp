@@ -11,7 +11,7 @@
     {
       "source": "skills/vjp-implement-spec/SKILL.md",
       "target": ".claude/skills/vjp-implement-spec/SKILL.md",
-      "sha256": "892a9b89a6586f60c910dd8d2e1ad3c7f99a96448119e3c4678f8ac2259c5b6c"
+      "sha256": "a0d9cc98f8fd437da25f29917b898cbf39de83081162a8aa368fc230383bbf22"
     },
     {
       "source": "skills/vjp-merge-claude-branches/SKILL.md",
@@ -21,7 +21,7 @@
     {
       "source": "skills/vjp-night-worker/SKILL.md",
       "target": ".claude/skills/vjp-night-worker/SKILL.md",
-      "sha256": "db519f0c951249a33d6c0b8150d2618b54c35e95095ff68bb719133b5dddb2c6"
+      "sha256": "c837e0bbb296e7639a8a9b16556396883cc5e833312b2ad73ecfee3c0888849a"
     },
     {
       "source": "skills/vjp-reintegrate-master/SKILL.md",
