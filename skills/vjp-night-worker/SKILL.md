@@ -30,9 +30,12 @@ those from the repository's own instructions.
 - **Never resolve a merge-back conflict blind.** The branch was cut from the main
   branch, so a conflict means something moved underneath the run. Abort and report.
 - **One spec's failure never stops the run.** The only whole-run stop conditions are
-  a dirty checkout at the start and an empty answer to the question.
+  a dirty checkout at the start, a push the repository refuses at the start, and an
+  empty answer to the question.
 - **Sequential only.** Never implement two specs at the same time, and never cut the
   next branch before the previous spec has landed or been abandoned.
+- **Prove the push before building.** A run that cannot push its work away builds
+  nothing: step 1 tests the push itself, before the first branch is cut.
 - **Never force-push, never rewrite published history.**
 
 ## 1. Prepare the run
@@ -51,6 +54,31 @@ Use whatever `git remote` reports if it is not `origin`.
 
 Stop and report if the tree is dirty, a merge or rebase is in progress, or the
 fast-forward is refused. Never stash, reset or force on your own initiative.
+
+### Prove the run can push
+
+A night run that cannot push is a night lost: every spec is built in a container that
+is reclaimed, and unpushed commits go with it. Prove the push while proving it is
+free - with `$MAIN` already up to date, pushing it changes nothing on the remote but
+still passes through every gate a real push would:
+
+```bash
+git push origin "$MAIN"                 # expect: Everything up-to-date
+```
+
+Reporting the branch already up to date is the pass; anything that refuses the
+command is the fail - a permission rule, an agent's own safety gate, a missing
+credential, a protected branch. **On a fail, stop the run here and build nothing.**
+Report what refused the push and what would clear it, so the next attempt starts from
+a repository that can land its work:
+
+- a rule in the calling repository's own agent settings that pre-approves the
+  commands a landing needs - a push and a merge - and no rule that asks about them or
+  denies them, since a denial outranks an approval and a question nobody is awake to
+  answer denies by default
+- the pushes named in the user's own words when the run starts, where the gate reads
+  the transcript: a general request to work the queue is not a stated intent to push
+- credentials for the remote, where those are what is missing
 
 Take the build and test commands from the repository's own instructions
 (`CLAUDE.md`, `AGENTS.md`, `README`, `package.json`, `Makefile`, CI workflows) and
@@ -91,7 +119,9 @@ be built; beyond 16, offer the 16 oldest and say how many were left out.
 
 Alongside the question, state what the run will do: how many pushes of the main
 branch it implies, what those pushes trigger, and that from the answer on nothing
-else will be asked.
+else will be asked. Ask, in that same message, for the pushes to be confirmed in the
+answer - a gate that reads the transcript weighs what the user asked for, and a
+stated hesitation about pushing binds it until the user lifts it.
 
 **Then end the turn.** No default, no guess, no implementing. Silence, a timeout or
 an empty answer means build nothing - report that and stop. Only ticked specs are
@@ -169,7 +199,8 @@ either push is rejected, someone else advanced the main branch during the run:
 with the next spec from a re-fetched main branch. Never force, never resolve blind.
 
 Retry a push that failed on a network error up to 4 times, backing off 2s, 4s, 8s,
-16s. A rejected push is not a network error.
+16s. A rejected push is not a network error, and neither is one a permission gate
+refused - that spec does not land, and the run carries on with the next.
 
 ## 5. Report
 
