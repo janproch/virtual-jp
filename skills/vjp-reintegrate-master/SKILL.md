@@ -1,6 +1,6 @@
 ---
 name: vjp-reintegrate-master
-description: Merge the freshly fetched main branch (master/main, whatever the repository uses) into the current feature branch, resolve the conflicts, verify the result and commit the merge. Never pushes. Use ONLY when the user explicitly asks for it ("reintegrate master", "reintegrate the main branch", "catch this branch up with master", "sync with master", "use the reintegrate master skill"). A branch that merely looks behind, a pull request that needs updating, or a request to rebase, squash or push is not an invocation.
+description: Merge the freshly fetched main branch (master/main, whatever the repository uses) into the current feature branch, resolve the conflicts, verify the result and commit the merge. Use ONLY when the user explicitly asks for it ("reintegrate master", "reintegrate the main branch", "catch this branch up with master", "sync with master", "use the reintegrate master skill"). A branch that merely looks behind, a pull request that needs updating, or a request to rebase or squash is not an invocation.
 ---
 
 # Reintegrate the main branch into the current branch
@@ -9,8 +9,8 @@ This skill brings the current feature branch up to date with the **freshly fetch
 main branch, resolves whatever conflicts that produces, and lands it as a merge
 commit on the feature branch.
 
-The direction is always `main -> current branch`. This skill never pushes and never
-commits to the main branch itself.
+The direction is always `main -> current branch`. The merge commit lands on the
+current branch; the main branch itself is left exactly as it was fetched.
 
 Nothing here assumes a particular project, branch name or build tool - take those
 from the repository's own instructions.
@@ -94,5 +94,5 @@ message instead.
 
 ## 5. Report
 
-How many commits came in; which files conflicted and how each was resolved; the build
-and test result; and that nothing was pushed - pushing stays the user's call.
+How many commits came in; which files conflicted and how each was resolved; and the
+build and test result.
