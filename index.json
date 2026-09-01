@@ -11,7 +11,7 @@
     {
       "source": "skills/vjp-implement-spec/SKILL.md",
       "target": ".claude/skills/vjp-implement-spec/SKILL.md",
-      "sha256": "2c93c897f40867b3e288604250b809552505f05b2b168989374a865c3ba35d61"
+      "sha256": "4368b47000b286e4c51c11d2d7ac879126317a968a51b27d8cc6d0e2371fcd22"
     },
     {
       "source": "skills/vjp-merge-claude-branches/SKILL.md",
