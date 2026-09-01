@@ -21,7 +21,7 @@
     {
       "source": "skills/vjp-night-worker/SKILL.md",
       "target": ".claude/skills/vjp-night-worker/SKILL.md",
-      "sha256": "47bd99b5bf72d1c8f96f332baaa9d5c00a260a764577b8e83478b7a16b9cd6f4"
+      "sha256": "38e25d897fd23c09232f3bfc279eb0c062d3bd9c2b151afa4368d188df9b8fa0"
     },
     {
       "source": "skills/vjp-reintegrate-master/SKILL.md",
