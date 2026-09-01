@@ -1,6 +1,6 @@
 ---
 name: vjp-update-virtual-jp
-description: Refresh this repository's vendored copies of JP's virtual-jp skills - clone janproch/virtual-jp, install every file its index.json ships into .claude/, remove the vjp-* entries it no longer ships, then commit and push the result on the main branch. Use ONLY when the user explicitly asks for it ("update virtual JP", "update the virtual-jp skills", "use the virtual-jp update skill"). A request to update dependencies, packages or the project's own documentation is not an invocation, and neither is a complaint about how a vjp-* skill behaves.
+description: Refresh this repository's vendored copies of JP's virtual-jp skills - clone janproch/virtual-jp, install every file its index.json ships into .claude/, remove the vjp-* entries it no longer ships, then commit and push the result on the repository's main branch. Use ONLY when the user explicitly asks for it ("update virtual JP", "update the virtual-jp skills", "use the virtual-jp update skill"). A request to update dependencies, packages or the project's own documentation is not an invocation, and neither is a complaint about how a vjp-* skill behaves.
 ---
 
 # Update the vendored virtual-jp skills
@@ -30,24 +30,45 @@ skill disappear.
   commits or discards their work first.
 - **Never edit a file after installing it.** What is written is what the manifest ships,
   byte for byte. A problem with a skill's contents is a change to make in virtual-jp.
-- **The main branch, and nothing else.** The update runs on the main branch and pushes
-  there - never a `claude/*` branch, never a pull request. Installing files the manifest
-  hashes is not a change anybody reviews, and a branch only delays skills the user has
-  just asked for. Never amend, never force-push.
+- **One commit, on the main branch.** The update is a single commit containing only
+  `.claude/`, made and pushed on the repository's main branch - never a `claude/*`
+  branch, never a pull request. Installing files the manifest hashes is not a change
+  anybody reviews, and a branch only delays skills the user has just asked for. Never
+  amend, never force.
 
 This skill is itself shipped by the manifest, so its own file is overwritten mid-run.
 The instructions already loaded finish the run; a changed procedure takes effect the
 next time the skill is invoked.
 
-## 1. Establish the calling repository
+## 1. Establish the calling repository, on its main branch
 
 ```bash
 git rev-parse --show-toplevel
 ```
 
-Not a git repository - stop and say so. Git is a precondition, not a convenience: step 5
+Not a git repository - stop and say so. Git is a precondition, not a convenience: step 4
 deletes files and `git checkout` is the only way back. Run every path below from that
 root.
+
+The update belongs on the repository's main branch, where every session that vendors
+these skills reads them, so get there before anything is written:
+
+```bash
+MAIN=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD | sed 's|^origin/||')
+git fetch origin --prune
+git switch "$MAIN" && git merge --ff-only "origin/$MAIN"
+```
+
+If `$MAIN` comes back empty, try `git remote set-head origin --auto`, else fall back to
+whichever of `origin/main` / `origin/master` exists - and ask the user if both do. Use
+whatever `git remote` reports if it is not `origin`. A repository with no remote at all
+has one branch to work on, the one it is on, and step 7 has nothing to push to.
+
+Leaving another branch needs a clean tree: if `git status --porcelain` reports anything,
+stop and say the update lands on the main branch and the checkout has work in progress.
+Stop and report too if a merge or rebase is in progress or the fast-forward is refused.
+Never stash, reset or force on your own initiative. If the session started on another
+branch, say so in the report: it stays on the main branch afterwards.
 
 ## 2. Refuse unless `.claude/` is clean and tracked
 
@@ -77,29 +98,13 @@ copy, the commit would be empty and there is no way back. Say that `.claude/` is
 gitignored and that the update needs it tracked.
 
 Ignored but with tracked files under it - proceed. The tracked files keep being tracked
-whatever `.gitignore` says, so the undo exists; step 8 catches what the ignore rule would
+whatever `.gitignore` says, so the undo exists; step 7 catches what the ignore rule would
 swallow.
 
 `--no-index` is not optional here: without it git stays silent about any path that is
 already tracked, which hides exactly the repositories this check exists for.
 
-## 3. Get on the main branch
-
-```bash
-MAIN=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD | sed 's|^origin/||')
-git switch "$MAIN"
-git pull --ff-only
-```
-
-Empty `MAIN` - try `git remote set-head origin --auto`, else fall back to whichever of
-`origin/main` / `origin/master` exists, and ask the user if both do. Use whatever
-`git remote` reports if it is not `origin`.
-
-Switch or fast-forward refused - stop and say why. Never stash, reset or force to get
-there. If the session was on another branch, say so in the report: it stays on the main
-branch afterwards.
-
-## 4. Fetch the manifest
+## 3. Fetch the manifest
 
 ```bash
 tmp=$(mktemp -d)
@@ -120,7 +125,7 @@ Read `$tmp/virtual-jp/index.json` and check **every** entry before touching anyt
 Anything fails - remove `$tmp`, stop, and report which entry and why. Nothing has been
 deleted at that point, which is the reason this check comes first.
 
-## 5. Sweep
+## 4. Sweep
 
 ```bash
 find .claude -maxdepth 2 \( -name 'vjp-*' -o -name 'jp-*' \)
@@ -136,19 +141,19 @@ those directories, and nothing in the new manifest overwrites them, so the sweep
 only thing that stops the old copy of a skill sitting beside its renamed twin. Keep the
 pattern until no vendored repository can still be on the old names.
 
-## 6. Install
+## 5. Install
 
 For each manifest entry, create the target's parent directory and copy `source` to
 `target`. Preserve the bytes; do not reformat, re-indent or fix anything on the way.
 
-## 7. Verify what was written
+## 6. Verify what was written
 
 Hash each installed target and compare it to the entry's `sha256`. A mismatch or a
 missing file stops the run: report it and leave the working tree as it is so the user
 can look, noting that `git checkout -- .claude` restores the previous state. Remove
 `$tmp` either way.
 
-## 8. Commit and push
+## 7. Commit and push
 
 ```bash
 git add -A -- .claude
@@ -173,22 +178,28 @@ Otherwise commit that path alone:
 
 ```bash
 git commit -m "chore: update virtual-jp skills to <short-sha>"
-git push
 ```
 
-Nothing else goes into that commit, and it goes to the main branch as it is - no branch,
-no pull request, nothing to confirm. Push rejected because the main branch moved:
-`git pull --ff-only` and push again. Rejected because the repository protects its main
-branch: say so and leave the commit local.
+Nothing else goes into this commit. Then put it where the repositories that vendor
+these skills will read it:
 
-## 9. Report
+```bash
+git push origin "$MAIN"
+```
 
-Read the statuses from the `git status --porcelain` output of step 8 - `A` added, `M`
+Rejected - `git fetch origin`, `git merge --ff-only "origin/$MAIN"`, then push again; if
+that fast-forward is refused, stop and report, leaving the commit where it is. Never
+force. Where there is no remote, the commit is the end of the run and the report says so.
+
+## 8. Report
+
+Read the statuses from the `git status --porcelain` output of step 7 - `A` added, `M`
 updated, `D` removed - and report:
 
 - the virtual-jp commit installed, and the manifest version
 - what was added, updated and removed, by path, and how many files were unchanged
-- the commit that was made and pushed, or that the repository was already up to date
+- the commit that was made and that it was pushed, or that the repository was already
+  up to date
 
 If this skill's own file is among the changes, say that the new version of the update
 procedure applies from the next invocation, not this one.

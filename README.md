@@ -14,10 +14,10 @@ really happened.
 | Skill | Phase | What it does |
 |---|---|---|
 | [`vjp-brainstorming`](skills/vjp-brainstorming/SKILL.md) | plan | Gathers context, settles every important decision with the user one question at a time, and writes `docs/specs/YYYY-MM-DD-feature-name.md`. Produces no code. |
-| [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, and writes `docs/impl/YYYY-MM-DD-feature-name.md`. |
+| [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, writes `docs/impl/YYYY-MM-DD-feature-name.md`, and commits and pushes the work on its own `claude/<feature>-<hash>` branch. |
 | [`vjp-night-worker`](skills/vjp-night-worker/SKILL.md) | batch | Asks once which not-yet-implemented specs to build, then implements them one by one - oldest spec first, each on its own branch, each landed and pushed on the main branch before the next starts - without asking anything else. |
 | [`vjp-update-virtual-jp`](skills/vjp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits and pushes the result on the main branch. |
-| [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. Never pushes. |
+| [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. |
 | [`vjp-merge-claude-branches`](skills/vjp-merge-claude-branches/SKILL.md) | integrate | Lists unmerged `claude/*` branches from the last two weeks, asks which to land, then for each one merges the main branch in, verifies it, and merges it back. |
 
 All of them are invoked explicitly. None starts on its own from an ordinary feature
@@ -75,7 +75,7 @@ What it touches, and nothing else:
   skills - is left alone
 - it refuses to start unless `.claude/` is clean and tracked by git, because the removal
   is a real delete and git is the only undo
-- it makes one local commit containing only `.claude/`, and never pushes
+- it makes one commit containing only `.claude/`, on the main branch, and pushes it there
 
 ## Use
 

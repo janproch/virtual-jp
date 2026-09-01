@@ -1,6 +1,6 @@
 ---
 name: vjp-implement-spec
-description: Implement an agreed specification from docs/specs/ - pick the spec, carry out its plan and its decisions in code, then write implementation notes to docs/impl/YYYY-MM-DD-feature-name.md. Use ONLY when the user explicitly points at a spec ("implement spec", "implement the spec", "implement the plan from the brainstorming session"). A bare "implement this" or "start implementation" with no spec named is not an invocation.
+description: Implement an agreed specification from docs/specs/ - pick the spec, carry out its plan and its decisions in code, then write implementation notes to docs/impl/YYYY-MM-DD-feature-name.md, and commit and push the work on its own branch. Use ONLY when the user explicitly points at a spec ("implement spec", "implement the spec", "implement the plan from the brainstorming session"). A bare "implement this" or "start implementation" with no spec named is not an invocation.
 ---
 
 # Implement a specification
@@ -183,11 +183,25 @@ git switch -c "claude/<feature-name>-$(openssl rand -hex 3)"
 
 Commit the implementation there, in the phases it was built in where that reads
 better than one commit. Then commit the notes on their own, `docs: implementation
-notes for <feature name>`. Push per the repository's rules, and name the branch when
-handing back.
+notes for <feature name>`.
 
-Report: the spec, the notes path, what was left undone in one line, and the state
-of the checks. Do not restate the changelog - it is in the file.
+**Then push the branch.** Work that exists only in the checkout it was written in is
+work nobody else can read, and a session's checkout does not outlive the session:
+
+```bash
+git push -u origin <branch>
+```
+
+Follow the repository's own convention instead where it has one that says otherwise.
+Retry a push that failed on a network error up to 4 times, backing off 2s, 4s, 8s,
+16s. A push the remote rejects is reported with the branch name and the commits left
+on it - never force, and never rewrite the branch to get around it. The branch is
+where this skill stops: taking it into the main branch is the caller's step, not this
+one's.
+
+Report: the spec, the branch and that it was pushed, the notes path, what was left
+undone in one line, and the state of the checks. Do not restate the changelog - it is
+in the file.
 
 ## 7. A follow-up request updates the notes
 
