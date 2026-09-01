@@ -60,14 +60,18 @@ cp -r skills/vjp-brainstorming /path/to/project/.claude/skills/
 
 ## Updating
 
-`vjp-update-virtual-jp` clones this repository, reads [`index.json`](index.json) - the
-manifest naming every file shipped and where it lands - and installs exactly that. It
-takes the latest commit on the default branch; there is no pinning and no release step.
+`vjp-update-virtual-jp` clones this repository, removes the `vjp-*` entries under
+`.claude/`, and copies in what [`manifest.json`](manifest.json) lists - the directories
+and files this repository ships and where each one lands. It takes the latest commit on
+the default branch; there is no pinning and no release step.
+
+The manifest carries no checksums and no file inventory, so adding, renaming or removing
+a skill never touches it: the clone is the inventory.
 
 What it touches, and nothing else:
 
 - it writes only under `.claude/`, and only paths the manifest names
-- it removes every `vjp-*` entry under `.claude/` before installing, which is how a skill
+- it removes every `vjp-*` entry under `.claude/` before copying, which is how a skill
   dropped from this repository disappears from your project
 - it also removes `jp-*` entries, the prefix these skills shipped under before the rename,
   so a repository vendored back then is not left holding both copies of every skill
@@ -105,9 +109,7 @@ is missing and what is weak about it.
 skills/
   vjp-<skill-name>/
     SKILL.md          frontmatter (name, description) + the instructions
-scripts/
-  build-index.py      generates index.json from skills/
-index.json            distribution manifest: every shipped file and its target path
+manifest.json         distribution manifest: the directories to copy and where they land
 ```
 
 ## Contributing a skill
@@ -116,8 +118,6 @@ index.json            distribution manifest: every shipped file and its target p
   starts with `vjp-`. The prefix is load-bearing: `vjp-update-virtual-jp` removes what this
   repository no longer ships by sweeping `vjp-*` entries out of a project's `.claude/`,
   with no record of the previous install to consult.
-- Run `python3 scripts/build-index.py` after adding, renaming or removing a skill, and
-  commit the regenerated `index.json` with the change.
 - `SKILL.md` frontmatter carries `name` and a `description` that says both what the skill
   does and when it should be used - the description is the only thing Claude reads when
   deciding whether to load the skill.

@@ -1,0 +1,9 @@
+{
+  "name": "virtual-jp",
+  "install": [
+    {
+      "source": "skills",
+      "target": ".claude/skills"
+    }
+  ]
+}
