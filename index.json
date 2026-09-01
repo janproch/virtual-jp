@@ -26,12 +26,12 @@
     {
       "source": "skills/vjp-reintegrate-master/SKILL.md",
       "target": ".claude/skills/vjp-reintegrate-master/SKILL.md",
-      "sha256": "a812a84b1eed72bc716dd77f3792bc8ee8eecde4ba9d3cdceb6457b6e4a8eb1b"
+      "sha256": "0e4f86b663812778bfbf8038ffa837f479a8dea6622453842c15b6982039f67b"
     },
     {
       "source": "skills/vjp-update-virtual-jp/SKILL.md",
       "target": ".claude/skills/vjp-update-virtual-jp/SKILL.md",
-      "sha256": "7527bdf9b4dcfad84ea147e82728496de3e1913075095290fd9c3959f1833261"
+      "sha256": "d39cd0fb3c7058ba8a81f15cdd7f457450c4a26d59ade720623acdba8a868585"
     }
   ]
 }
