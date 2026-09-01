@@ -16,9 +16,8 @@ needs no change to it.
 
 The calling repository keeps **no record** of a previous update - no lock file, no
 receipt. Removal works by name instead: everything virtual-jp ships is named `vjp-*`
-directly inside a `.claude/` directory, so sweeping those entries - and the `jp-*` ones
-an older virtual-jp shipped under - and copying the manifest's sources back is what makes
-a dropped skill disappear.
+directly inside a `.claude/` directory, so sweeping those entries and copying the
+manifest's sources back is what makes a dropped skill disappear.
 
 ## Hard rules
 
@@ -139,18 +138,12 @@ deleted at that point, which is the reason this check comes first.
 ## 4. Sweep
 
 ```bash
-find .claude -maxdepth 2 \( -name 'vjp-*' -o -name 'jp-*' \)
+find .claude -maxdepth 2 -name 'vjp-*'
 ```
 
 Remove every result. Depth 1 and 2 only, which is exactly the range the naming rule
 covers. This is the whole removal mechanism: a skill virtual-jp has dropped is not in the
 clone, so it is not copied back, so it is gone.
-
-The `jp-*` half of that pattern is the legacy namespace: virtual-jp shipped these skills
-under `jp-*` before the rename to `vjp-*`. A repository vendored back then still carries
-those directories, and nothing in the new copy overwrites them, so the sweep is the only
-thing that stops the old copy of a skill sitting beside its renamed twin. Keep the
-pattern until no vendored repository can still be on the old names.
 
 ## 5. Copy
 
