@@ -6,32 +6,32 @@
     {
       "source": "skills/vjp-brainstorming/SKILL.md",
       "target": ".claude/skills/vjp-brainstorming/SKILL.md",
-      "sha256": "12e1c48611dc0655ff877073838da9ed4ee349ac8c80edcd44544a2ed0c5e246"
+      "sha256": "60b17c926e68eae539849fd16a3d871afc300b3613333d21315fb6b07433482f"
     },
     {
       "source": "skills/vjp-implement-spec/SKILL.md",
       "target": ".claude/skills/vjp-implement-spec/SKILL.md",
-      "sha256": "4368b47000b286e4c51c11d2d7ac879126317a968a51b27d8cc6d0e2371fcd22"
+      "sha256": "9c5d7474efa956d6db93128df1cab0cfb5789db0bc5de5702a275d41593a1384"
     },
     {
       "source": "skills/vjp-merge-claude-branches/SKILL.md",
       "target": ".claude/skills/vjp-merge-claude-branches/SKILL.md",
-      "sha256": "e214f804f07fe0a5d535f7e7bb579fc8071eaf228d77c90a9ca66a89c5b19b47"
+      "sha256": "a5e2f9055c9aaa3431ad663a787bd1599e28ef369067f7e163c56db68c450541"
     },
     {
       "source": "skills/vjp-night-worker/SKILL.md",
       "target": ".claude/skills/vjp-night-worker/SKILL.md",
-      "sha256": "38e25d897fd23c09232f3bfc279eb0c062d3bd9c2b151afa4368d188df9b8fa0"
+      "sha256": "5a3c6cf2c969aae3311cd18dc260594f9bc3d4cacf9aed53d73fa789b7fbd285"
     },
     {
       "source": "skills/vjp-reintegrate-master/SKILL.md",
       "target": ".claude/skills/vjp-reintegrate-master/SKILL.md",
-      "sha256": "0e4f86b663812778bfbf8038ffa837f479a8dea6622453842c15b6982039f67b"
+      "sha256": "18ad9f4bb0f3570d1d74025745b369bec9eaabaf1f966f0d022286ecb9ac4472"
     },
     {
       "source": "skills/vjp-update-virtual-jp/SKILL.md",
       "target": ".claude/skills/vjp-update-virtual-jp/SKILL.md",
-      "sha256": "d39cd0fb3c7058ba8a81f15cdd7f457450c4a26d59ade720623acdba8a868585"
+      "sha256": "33a5b1e6d5b9b68f8ac97051f96faadd06e7e61b4a72e942b25c3641db597fce"
     }
   ]
 }

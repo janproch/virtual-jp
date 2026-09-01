@@ -31,7 +31,10 @@ skill disappear.
 - **Never edit a file after installing it.** What is written is what the manifest ships,
   byte for byte. A problem with a skill's contents is a change to make in virtual-jp.
 - **One commit, on the main branch.** The update is a single commit containing only
-  `.claude/`, made and pushed on the repository's main branch. Never amend, never force.
+  `.claude/`, made and pushed on the repository's main branch - never a `claude/*`
+  branch, never a pull request. Installing files the manifest hashes is not a change
+  anybody reviews, and a branch only delays skills the user has just asked for. Never
+  amend, never force.
 
 This skill is itself shipped by the manifest, so its own file is overwritten mid-run.
 The instructions already loaded finish the run; a changed procedure takes effect the
@@ -64,7 +67,8 @@ has one branch to work on, the one it is on, and step 7 has nothing to push to.
 Leaving another branch needs a clean tree: if `git status --porcelain` reports anything,
 stop and say the update lands on the main branch and the checkout has work in progress.
 Stop and report too if a merge or rebase is in progress or the fast-forward is refused.
-Never stash, reset or force on your own initiative.
+Never stash, reset or force on your own initiative. If the session started on another
+branch, say so in the report: it stays on the main branch afterwards.
 
 ## 2. Refuse unless `.claude/` is clean and tracked
 
