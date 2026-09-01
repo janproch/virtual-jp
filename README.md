@@ -73,10 +73,8 @@ What it touches, and nothing else:
 - it writes only under `.claude/`, and only paths the manifest names
 - it removes every `vjp-*` entry under `.claude/` before copying, which is how a skill
   dropped from this repository disappears from your project
-- it also removes `jp-*` entries, the prefix these skills shipped under before the rename,
-  so a repository vendored back then is not left holding both copies of every skill
-- anything in `.claude/` not named `vjp-*` or `jp-*` - your `settings.json`, your own
-  skills - is left alone
+- anything in `.claude/` not named `vjp-*` - your `settings.json`, your own skills - is
+  left alone
 - it refuses to start unless `.claude/` is clean and tracked by git, because the removal
   is a real delete and git is the only undo
 - it makes one commit containing only `.claude/`, on the main branch, and pushes it there

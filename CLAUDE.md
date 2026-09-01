@@ -35,10 +35,6 @@ no application code - the deliverable is the skill instructions themselves.
   directly inside a `.claude/` directory could never be removed again, so the update
   skill validates the manifest against that rule and refuses the whole manifest if an
   entry breaks it.
-- The prefix used to be `jp-`. The sweep in `vjp-update-virtual-jp` still removes `jp-*`
-  entries as well, so a repository vendored before the rename does not end up carrying
-  both copies of every skill. That legacy half of the sweep goes away once no vendored
-  repository can still be on the old names.
 
 ## Checks
 
