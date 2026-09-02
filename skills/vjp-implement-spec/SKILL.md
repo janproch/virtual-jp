@@ -29,6 +29,10 @@ settled with the user and are not reopened here.
   notes are written, and their real outcome goes in the notes.
 - **The notes file is part of the work, not an optional extra.** An implementation
   without `docs/impl/YYYY-MM-DD-feature-name.md` is unfinished.
+- **Nothing is handed back untestable by someone else.** The notes' *How to test*
+  says how to exercise the feature from outside the code, and where the repository's
+  `CLAUDE.md` asks for end-to-end coverage the E2E test is written here, in this
+  session - see step 4.
 - **A follow-up request updates the notes, in the same turn.** Every change asked
   for after the first hand-back is merged into the existing notes and listed under
   *Follow-up changes* - see step 7. Notes that stop at the first hand-back describe
@@ -92,13 +96,34 @@ recorded in the notes and keeps moving.
 ## 4. Verify
 
 Run the repository's own checks - its test, build and lint commands, plus its
-end-to-end suite when the change reaches the UI and the spec asked for E2E coverage.
-Take the commands from `CLAUDE.md` and the project's own manifest (`package.json`,
-`Makefile`, `pyproject.toml`, ...), never from memory of another project.
+end-to-end suite when the change reaches the UI. Take the commands from `CLAUDE.md`
+and the project's own manifest (`package.json`, `Makefile`, `pyproject.toml`, ...),
+never from memory of another project.
 
 A failure you caused is fixed. A failure that was already there on the base branch
 is reported as such in the notes, with the evidence. Never skip, disable or narrow
 a test to get green.
+
+### The end-to-end test is yours to write
+
+Write it yourself, here, whenever `CLAUDE.md` recommends or requires end-to-end
+coverage for a change like this one, or the spec asked for it. It is part of the
+implementation, not a follow-up:
+
+- take the framework, the directory and the naming from the repository - the E2E
+  tests already there are the pattern, and a second framework is never introduced
+- drive the feature through the surface a real user drives it through, and assert
+  what that user would see, not the internal state
+- cover the main path of the spec first, then the case the spec singles out; a few
+  steps that really run beat a suite nobody will maintain
+- run it, see it pass, and check that it can fail - a test still green against the
+  feature reverted, stubbed or switched off is testing nothing
+
+Do not add an E2E framework to a repository that has none, and do not write E2E
+tests where `CLAUDE.md` is silent and no E2E suite exists - that is a change of its
+own, and it belongs in *Recommended follow-ups*. What replaces the test there is the
+notes' *How to test*: the steps a human tester, or a later agent writing that suite,
+can follow without reading the diff.
 
 ## 5. Write the implementation notes
 
@@ -134,6 +159,32 @@ reformulated in one line, then one or two sentences on how it was built. Nothing
 else - the diff is the detail, and *Recommended follow-ups* below is for work
 nobody has asked for.
 
+## How to test
+
+How to see the feature working from outside the code, written for two readers at
+once: a human tester with the app in front of them, and an agent that will later turn
+this into an end-to-end test. Concrete throughout - real routes, real fixture data,
+real expected values - never "check that it works".
+
+**Automated coverage.** One line: the end-to-end test that now covers this and the
+command that runs it, or "None" and why - no E2E suite in the repository, nothing
+user-facing to drive, deferred.
+
+**Setup.** What has to be true before step 1: the repository's own command to start
+the app, the account or role to be signed in as, the fixture or seed data, any flag
+or configuration the feature needs.
+
+**Steps.** Numbered, one action each, naming exactly what to open, click, type or
+call - screen, route, endpoint, field, button - and what must be observed after it.
+The last step is the result the feature exists for.
+
+**Also worth trying.** The cases most likely to break, one line each with the
+behaviour expected: the empty case, the rejected input, the second run, the other
+role.
+
+Someone who has never read the diff follows this top to bottom without guessing, and
+an agent turns it into a test without asking a question.
+
 ## What is missing
 
 Everything the spec asked for that is not in the code, and why - deferred,
@@ -165,7 +216,9 @@ Nothing user-visible: say "No user-visible changes." and nothing else.
 
 Style: ASCII only, present tense, and short - the notes are a page, not a report.
 The `What was done` section stays smaller than the three that follow it if the
-implementation was rough; that asymmetry is the point.
+implementation was rough; that asymmetry is the point. `How to test` is the one
+section allowed to run long, and only where the feature really has several paths -
+it is read by someone who cannot ask you a question.
 
 ## 6. Commit and hand back
 
@@ -200,7 +253,8 @@ where this skill stops: taking it into the main branch is the caller's step, not
 one's.
 
 Report: the spec, the branch and that it was pushed, the notes path, what was left
-undone in one line, and the state of the checks. Do not restate the changelog - it is
+undone in one line, the state of the checks, and whether an end-to-end test was
+written or the notes carry test steps instead. Do not restate the changelog - it is
 in the file.
 
 ## 7. A follow-up request updates the notes
@@ -215,6 +269,9 @@ Merging means all of:
 - the existing sections absorb it - `What was done` describes what now exists, and
   `Known problems`, `What is missing` and the `Changelog` gain or lose whatever the
   change moved
+- **`How to test` describes the feature as it now behaves** - steps the change made
+  wrong are corrected, steps it added are added, and the E2E test is extended or
+  written under the same rule as step 4
 - **`Follow-up changes` gains a numbered entry**: the request reformulated in one
   line, plus one or two sentences on how it was built
 - the same checks are run again, and the notes say so
