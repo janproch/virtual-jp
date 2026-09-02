@@ -16,6 +16,7 @@ really happened.
 | [`vjp-brainstorming`](skills/vjp-brainstorming/SKILL.md) | plan | Gathers context, settles every important decision with the user one question at a time, and writes `docs/specs/YYYY-MM-DD-feature-name.md`. Produces no code. |
 | [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, writes `docs/impl/YYYY-MM-DD-feature-name.md`, and commits and pushes the work on its own `claude/<feature>-<hash>` branch. |
 | [`vjp-night-worker`](skills/vjp-night-worker/SKILL.md) | batch | Asks once which not-yet-implemented specs to build, then implements them one by one - oldest spec first, each on its own branch, each landed and pushed on the main branch before the next starts - without asking anything else. |
+| [`vjp-systematic-bugfix`](skills/vjp-systematic-bugfix/SKILL.md) | fix | Reproduces a reported bug first, digs to the real root cause, adds a regression test that is seen failing before the fix, fixes the cause, and writes `docs/fixes/YYYY-MM-DD-bug-name.md`. |
 | [`vjp-update-virtual-jp`](skills/vjp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits and pushes the result on the main branch. |
 | [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. |
 | [`vjp-merge-claude-branches`](skills/vjp-merge-claude-branches/SKILL.md) | integrate | Lists unmerged `claude/*` branches from the last two weeks, asks which to land, then for each one merges the main branch in, verifies it, and merges it back. |
@@ -93,6 +94,10 @@ What it touches, and nothing else:
 > run night worker
   ... one round of checkboxes, then a queue of specs built and landed ...
   -> a merge commit and docs/impl/ notes per spec
+
+> systematic bugfix: CSV import drops the last row
+  ... reproduce, root cause, failing regression test, fix ...
+  -> docs/fixes/2026-08-27-csv-import-drops-last-row.md
 ```
 
 The spec is what the user agreed to; the notes are what was actually built, including what
