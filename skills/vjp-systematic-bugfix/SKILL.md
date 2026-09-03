@@ -1,6 +1,6 @@
 ---
 name: vjp-systematic-bugfix
-description: Fix a bug the disciplined way - reproduce it first, find the real root cause, cover it with a regression test that fails before the fix, then write the fix report to docs/fixes/YYYY-MM-DD-bug-name.md. Use ONLY when the user explicitly asks for it ("systematic bugfix", "make a systematic bugfix", "systematic bugfix:", "fix this systematically", "use the systematic bugfix skill"). A plain bug report, a stack trace, a failing test or "this is broken, fix it" is not an invocation - fix those directly instead.
+description: Fix a bug the disciplined way - reproduce it first, find the real root cause, work out whether it is a regression or a bug by design, cover it with a regression test that fails before the fix, then write the fix report to docs/fixes/YYYY-MM-DD-bug-name.md. Use ONLY when the user explicitly asks for it ("systematic bugfix", "make a systematic bugfix", "systematic bugfix:", "fix this systematically", "use the systematic bugfix skill"). A plain bug report, a stack trace, a failing test or "this is broken, fix it" is not an invocation - fix those directly instead.
 ---
 
 # Fix a bug systematically
@@ -32,6 +32,9 @@ the repository's own `CLAUDE.md` and its manifest.
   the bug.
 - **Never skip, disable, weaken or delete a test to get green.** A test that fails
   for a second, unrelated reason is a finding for *Follow-ups*, not an edit.
+- **Never guess where the bug came from.** An origin is what `git blame`, a commit
+  diff or a bisect showed. A commit named on a hunch is worse than "unknown", and
+  the search for it is time-boxed - see step 4.
 - **Never continue past an unanswered question.** After an `AskUserQuestion` call
   your turn ends - no further tool calls, no edits.
 - **The report is part of the work.** A fix without
@@ -97,7 +100,38 @@ needs a "probably" or a "somewhere", you are not there yet - keep digging.
 Remove your instrumentation once the cause is known. Nothing added for the hunt
 stays in the fix.
 
-## 4. Write the regression test first
+## 4. Date the bug - regression or by design
+
+The cause is known; spend a **bounded** effort on one more question, because it
+changes what the fix has to respect. Two answers matter:
+
+- **regression** - the code once handled this case and a change broke it. The commit
+  that broke it was doing something; read its diff and its message, so the fix does
+  not undo whatever that was.
+- **by design** - the case was never handled. The bug is as old as the line, and the
+  gap that allowed it belongs in *Follow-ups*.
+
+Cheapest first, stop at the first one that answers:
+
+1. `git blame` on the exact lines the cause lives at, then `git show` on the commit
+   it names. A commit whose diff turns the working shape into the broken one is the
+   answer, and its message usually says why.
+2. Where blame lands on a move, a rename or a reformat, look past it -
+   `git blame -w -C` on those lines, or `git log --follow -p -- <file>`.
+3. Where blame names the commit that first wrote the code, and the lines have not
+   changed since, that is "by design" - nothing further to run.
+4. Only where 1-3 did not answer **and** the reproduction from step 2 is a single
+   scriptable command: one `git bisect run <command>` between a commit known to work
+   and the current one.
+
+**The budget is a handful of commands and at most one bisect.** Stop and write
+"unknown" the moment the search stops being cheap - a squashed or imported history,
+a vendored tree, a reproduction that needs data, a service or a build that old
+commits cannot produce. Say in one line what made it too costly. This step never
+blocks the fix and never justifies a wider change: a bug whose origin resists the
+search is still fixed.
+
+## 5. Write the regression test first
 
 Write a test that fails **now**, on the unfixed code, for the reason you just named.
 
@@ -113,7 +147,7 @@ them. Test the cause at the level the cause lives at - a unit test on the functi
 that is wrong, plus an end-to-end test only where the bug is about the wiring
 between parts.
 
-## 5. Fix the cause
+## 6. Fix the cause
 
 Change the code that is wrong, and only that. The fix is the smallest change that
 removes the cause - not a refactor of the area, not a tidy-up of neighbouring code,
@@ -142,7 +176,7 @@ it goes in the report's *ADR* section. Decide it with the user through
 `AskUserQuestion` before implementing it, and **end the turn** on the question. A
 bug fixed in place decides nothing and needs no ADR.
 
-## 6. Write the fix report
+## 7. Write the fix report
 
 ```bash
 date +%F        # the YYYY-MM-DD prefix - never guess today's date
@@ -161,7 +195,7 @@ Sections, all of them, in this order:
 Date: YYYY-MM-DD
 Status: fixed | mitigated
 Area: <modules the bug and the fix touched>
-Introduced by: <commit or release, or "unknown">
+Origin: regression in <commit> | by design | unknown
 
 ## Reported problem
 
@@ -182,9 +216,17 @@ correctly works, which rules out a broken environment.
 ## Root cause
 
 Why the code was wrong, in a short paragraph: the file and the lines, the state that
-was already wrong by the time it got there, and the reasoning error behind it. Where
-`git blame` names the change that introduced it, say so. This section explains, it
-does not narrate the search.
+was already wrong by the time it got there, and the reasoning error behind it. This
+section explains, it does not narrate the search - where the bug came from belongs
+in *Origin*.
+
+## Origin
+
+Whether the bug is a regression or was there by design, and what showed it. For a
+regression: the commit - hash, date, subject - what it was doing, and how it broke
+this case. For a bug by design: the case the code never handled, and since when.
+For "unknown": what was searched and what made going further too costly, in one
+line, with no guess at a culprit.
 
 ## The fix
 
@@ -240,7 +282,7 @@ Style: ASCII only, present tense, and short - a page. *Root cause*, *Regression
 tests* and *Consequences and risks* carry the weight; if *The fix* is the longest
 section, the cause was probably not found.
 
-## 7. Commit, push and hand back
+## 8. Commit, push and hand back
 
 Commit the fix and the test together - they belong to one change - then the report
 on its own, `docs: fix report for <bug name>`.
@@ -267,7 +309,8 @@ Retry a push that failed on a network error up to 4 times, backing off 2s, 4s, 8
 16s. A push the remote rejects is reported with the branch name and the commits left
 on it - never force, and never rewrite the branch to get around it.
 
-Report, in a few lines: the root cause in one sentence, what was changed, the
+Report, in a few lines: the root cause in one sentence, whether it is a regression or by design (or that
+the origin is unknown), what was changed, the
 regression test by name and that it was seen failing first, the state of the checks,
 the branch and that it was pushed, and the report path. Do not restate the
 follow-ups - they are in the file.
