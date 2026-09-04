@@ -14,6 +14,7 @@ really happened.
 | Skill | Phase | What it does |
 |---|---|---|
 | [`vjp-brainstorming`](skills/vjp-brainstorming/SKILL.md) | plan | Gathers context, settles every important decision with the user one question at a time, and writes `docs/specs/YYYY-MM-DD-feature-name.md`. Produces no code. |
+| [`vjp-design-feature`](skills/vjp-design-feature/SKILL.md) | plan | Produces the same `docs/specs/YYYY-MM-DD-feature-name.md` as brainstorming, but asks only the questions it cannot answer from the repository or the request - the rest it decides itself and records as its own decisions. |
 | [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, writes the end-to-end test where the repository asks for one, writes `docs/impl/YYYY-MM-DD-feature-name.md` with the steps to test the feature, and commits and pushes the work on its own `claude/<feature>-<hash>` branch. |
 | [`vjp-night-worker`](skills/vjp-night-worker/SKILL.md) | batch | Asks once which not-yet-implemented specs to build, then implements them one by one - oldest spec first, each on its own branch, each landed and pushed on the main branch before the next starts - without asking anything else. |
 | [`vjp-systematic-bugfix`](skills/vjp-systematic-bugfix/SKILL.md) | fix | Reproduces a reported bug first, digs to the real root cause, dates the bug as a regression or a bug by design, adds a regression test that is seen failing before the fix, fixes the cause, and writes `docs/fixes/YYYY-MM-DD-bug-name.md`. |
@@ -85,6 +86,10 @@ What it touches, and nothing else:
 ```
 > use the brainstorming skill for adding CSV import
   ... a few rounds of questions ...
+  -> docs/specs/2026-08-27-csv-import.md
+
+> design feature: CSV import
+  ... at most a couple of questions, the rest decided and written down ...
   -> docs/specs/2026-08-27-csv-import.md
 
 > implement the spec from the brainstorming session
