@@ -17,6 +17,7 @@ really happened.
 | [`vjp-design-feature`](skills/vjp-design-feature/SKILL.md) | plan | Produces the same `docs/specs/YYYY-MM-DD-feature-name.md` as brainstorming, but asks only the questions it cannot answer from the repository or the request - the rest it decides itself and records as its own decisions. |
 | [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, writes the end-to-end test where the repository asks for one, writes `docs/impl/YYYY-MM-DD-feature-name.md` with the steps to test the feature, and commits and pushes the work on its own `claude/<feature>-<hash>` branch. |
 | [`vjp-night-worker`](skills/vjp-night-worker/SKILL.md) | batch | Asks once which not-yet-implemented specs to build, then implements them one by one - oldest spec first, each on its own branch, each landed and pushed on the main branch before the next starts - without asking anything else. |
+| [`vjp-inspect-project`](skills/vjp-inspect-project/SKILL.md) | inspect | Audits a repository along four axes - language and technology stack, how it is deployed, what the documentation and the root `README.md` say, and what the tests cover - grades each one and publishes the findings as an HTML artifact. Changes nothing. |
 | [`vjp-systematic-bugfix`](skills/vjp-systematic-bugfix/SKILL.md) | fix | Reproduces a reported bug first, digs to the real root cause, dates the bug as a regression or a bug by design, adds a regression test that is seen failing before the fix, fixes the cause, and writes `docs/fixes/YYYY-MM-DD-bug-name.md`. |
 | [`vjp-update-virtual-jp`](skills/vjp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits and pushes the result on the main branch. |
 | [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. |
@@ -99,6 +100,10 @@ What it touches, and nothing else:
 > run night worker
   ... one round of checkboxes, then a queue of specs built and landed ...
   -> a merge commit and docs/impl/ notes per spec
+
+> inspect project:
+  ... stack, deploy, documentation and tests read from the repository ...
+  -> an HTML artifact with a grade per axis and an ordered fix list
 
 > systematic bugfix: CSV import drops the last row
   ... reproduce, root cause, failing regression test, fix ...
