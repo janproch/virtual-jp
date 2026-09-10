@@ -82,6 +82,15 @@ What it touches, and nothing else:
   is a real delete and git is the only undo
 - it makes one commit containing only `.claude/`, on the main branch, and pushes it there
 
+## Versioning
+
+The plugin version is carried in both [`plugin.json`](.claude-plugin/plugin.json) and
+[`marketplace.json`](.claude-plugin/marketplace.json), and the two are always the same
+string. It is bumped on every merge to the main branch - major when a skill is removed or
+renamed or the manifest changes what it installs, minor when a skill is added or changes
+behaviour, patch for wording. `vjp-update-virtual-jp` still takes the latest commit on the
+default branch; the version says which set of skills that commit is, it is not a pin.
+
 ## Use
 
 ```

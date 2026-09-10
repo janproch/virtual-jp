@@ -36,6 +36,22 @@ no application code - the deliverable is the skill instructions themselves.
   skill validates the manifest against that rule and refuses the whole manifest if an
   entry breaks it.
 
+## Versioning and merging to the main branch
+
+- The plugin version lives in two places and the two must always be equal:
+  `.claude-plugin/plugin.json` (top-level `version`) and `.claude-plugin/marketplace.json`
+  (`version` on the `virtual-jp` entry in `plugins`).
+- Every merge to the main branch bumps that version in both files. Major when a shipped
+  skill is removed or renamed or `manifest.json` changes what it installs; minor when a
+  skill is added or an existing one changes behaviour; patch for wording and
+  documentation.
+- Land work on the main branch through the `merge-vjp-skill` skill
+  (`.claude/skills/merge-vjp-skill/SKILL.md`), invoked as "merge skill". It refreshes the
+  branch, bumps both files, runs the checks below, merges and pushes.
+- That skill is internal to this repository. It lives under `.claude/skills/` and not
+  under `skills/`, because `manifest.json` ships `skills/` as a whole and nothing about
+  releasing this repository belongs in a repository that installs these skills.
+
 ## Checks
 
 There is no build and no test suite. After changing anything:
@@ -46,3 +62,5 @@ There is no build and no test suite. After changing anything:
 - Every directory under `skills/` is named `vjp-*`, so the sweep in
   `vjp-update-virtual-jp` can remove it again.
 - `README.md` lists exactly the skills present in `skills/`.
+- The `version` in `.claude-plugin/plugin.json` and the one in
+  `.claude-plugin/marketplace.json` are the same string.
