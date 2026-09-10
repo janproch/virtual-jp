@@ -18,6 +18,7 @@ really happened.
 | [`vjp-implement-spec`](skills/vjp-implement-spec/SKILL.md) | build | Picks an agreed spec, carries out its plan and decisions in code, runs the repository's own checks, writes the end-to-end test where the repository asks for one, writes `docs/impl/YYYY-MM-DD-feature-name.md` with the steps to test the feature, and commits and pushes the work on its own `claude/<feature>-<hash>` branch. |
 | [`vjp-night-worker`](skills/vjp-night-worker/SKILL.md) | batch | Asks once which not-yet-implemented specs to build, then implements them one by one - oldest spec first, each on its own branch, each landed and pushed on the main branch before the next starts - without asking anything else. |
 | [`vjp-systematic-bugfix`](skills/vjp-systematic-bugfix/SKILL.md) | fix | Reproduces a reported bug first, digs to the real root cause, dates the bug as a regression or a bug by design, adds a regression test that is seen failing before the fix, fixes the cause, and writes `docs/fixes/YYYY-MM-DD-bug-name.md`. |
+| [`vjp-update-virtual-jp`](skills/vjp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits and pushes the result on the main branch. |
 | [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. |
 | [`vjp-merge-claude-branches`](skills/vjp-merge-claude-branches/SKILL.md) | integrate | Lists unmerged `claude/*` branches from the last two weeks, asks which to land, then for each one merges the main branch in, verifies it, and merges it back. |
 
@@ -26,43 +27,59 @@ request.
 
 ## Install
 
-This repository is a Claude Code plugin, and that is how it is meant to be installed. Add
-the marketplace once, then install the plugin:
+**Vendored, and kept up to date.** Run this once in the target repository; from then on
+"update virtual JP" installs every skill and removes what is no longer shipped:
+
+```bash
+mkdir -p .claude/skills/vjp-update-virtual-jp &&
+curl -fsSL https://raw.githubusercontent.com/janproch/virtual-jp/master/skills/vjp-update-virtual-jp/SKILL.md \
+  -o .claude/skills/vjp-update-virtual-jp/SKILL.md &&
+git add .claude/skills/vjp-update-virtual-jp &&
+git commit -m "chore: bootstrap virtual-jp update skill"
+```
+
+The commit is part of the command on purpose: the update refuses to run against an
+uncommitted `.claude/`, so a bootstrapped copy that was never committed would stop it on
+its first invocation. Then, in that repository:
+
+```
+> update virtual JP
+```
+
+**As a plugin**, leaving the skills outside the target repository:
 
 ```
 /plugin marketplace add janproch/virtual-jp
 /plugin install virtual-jp@virtual-jp
 ```
 
-The skills stay outside your repository - nothing is copied into your project's
-`.claude/`, so there is nothing of virtual-jp to commit, review or keep in sync there. The
-plugin is installed for your Claude Code user, so every repository you open gets the same
-skills.
-
-Once installed, the skills are invoked by name in any repository:
-
-```
-> design feature: CSV import
-```
-
-**Or one skill by hand**, if you want a single skill vendored into one repository - the
-skills have no dependency on this repository or on each other:
+**Or one skill by hand** - the skills have no dependency on this repository or on each
+other:
 
 ```bash
 cp -r skills/vjp-brainstorming /path/to/project/.claude/skills/
 ```
 
-A skill copied this way is a snapshot: it is yours to update, and the plugin does not
-know about it.
-
 ## Updating
 
-Run `/plugin` and use the menu to update the `virtual-jp` marketplace and the installed
-plugin. Updating pulls the latest commit on the default branch - there is no pinning and
-no release step, so an added, renamed or removed skill arrives with the next update.
+`vjp-update-virtual-jp` clones this repository, removes the `vjp-*` entries under
+`.claude/`, and copies in what [`manifest.json`](manifest.json) lists - the directories
+and files this repository ships and where each one lands. It takes the latest commit on
+the default branch; there is no pinning and no release step.
 
-Because the plugin's skills live outside your repository, an update changes nothing under
-your project's `.claude/` and needs no commit.
+The manifest carries no checksums and no file inventory, so adding, renaming or removing
+a skill never touches it: the clone is the inventory.
+
+What it touches, and nothing else:
+
+- it writes only under `.claude/`, and only paths the manifest names
+- it removes every `vjp-*` entry under `.claude/` before copying, which is how a skill
+  dropped from this repository disappears from your project
+- anything in `.claude/` not named `vjp-*` - your `settings.json`, your own skills - is
+  left alone
+- it refuses to start unless `.claude/` is clean and tracked by git, because the removal
+  is a real delete and git is the only undo
+- it makes one commit containing only `.claude/`, on the main branch, and pushes it there
 
 ## Use
 
@@ -100,13 +117,15 @@ is missing and what is weak about it.
 skills/
   vjp-<skill-name>/
     SKILL.md          frontmatter (name, description) + the instructions
+manifest.json         distribution manifest: the directories to copy and where they land
 ```
 
 ## Contributing a skill
 
 - One directory per skill under `skills/`, named exactly as the skill's `name`, which
-  starts with `vjp-`. The prefix keeps these skills recognizable as this plugin's own and
-  keeps them from colliding with skills a repository defines for itself.
+  starts with `vjp-`. The prefix is load-bearing: `vjp-update-virtual-jp` removes what this
+  repository no longer ships by sweeping `vjp-*` entries out of a project's `.claude/`,
+  with no record of the previous install to consult.
 - `SKILL.md` frontmatter carries `name` and a `description` that says both what the skill
   does and when it should be used - the description is the only thing Claude reads when
   deciding whether to load the skill.
