@@ -5,95 +5,41 @@ description: Work a queue of specifications unattended - ask once which of the n
 
 # Work the spec queue overnight
 
-This skill runs a **whole queue** of already-written specifications without the user
-present. It asks one question - which specs to build - and after that decides
-everything by rule, because there is nobody awake to answer.
+One question up front, then no more - nobody is awake to answer. Specs are built strictly
+sequentially, each on its own branch cut from the current main branch and landed before
+the next starts.
 
-Each spec is implemented exactly as `vjp-implement-spec` prescribes, on its own
-branch cut from the main branch as it stands, and lands on the main branch before the
-next spec starts. The queue is strictly sequential; that is what keeps every merge
-conflict-free.
+## Rules
 
-Nothing here assumes a particular project, branch name, build tool or CI setup - take
-those from the repository's own instructions.
+- After the selection question, never ask again: resolve on the most defensible reading
+  and record it as an assumption in the notes' *Known problems*.
+- Land only verified work (checks green, notes exist). Never skip or weaken tests.
+- Never resolve a merge-back conflict; abort and move on.
+- One spec failing never stops the run. Whole-run stops: dirty checkout, failed push
+  probe, empty answer.
+- Never force-push or rewrite published history.
 
-## Hard rules
-
-- **Explicit invocation only.** The user must name the night worker. "Implement the
-  specs", "implement this" or a plain feature request is not an invocation.
-- **One question, and only one.** After the checkbox round the run never asks again.
-  A choice that would have been an `AskUserQuestion` is made on the most defensible
-  reading and written into the implementation notes' *Known problems*.
-- **Never merge unverified work.** A spec lands only when its own checks passed in
-  its branch and its `docs/impl/` notes exist. Never skip, disable or narrow a test
-  to get there.
-- **Never resolve a merge-back conflict blind.** The branch was cut from the main
-  branch, so a conflict means something moved underneath the run. Abort and report.
-- **One spec's failure never stops the run.** The only whole-run stop conditions are
-  a dirty checkout at the start, a push the repository refuses at the start, and an
-  empty answer to the question.
-- **Sequential only.** Never implement two specs at the same time, and never cut the
-  next branch before the previous spec has landed or been abandoned.
-- **Prove the push before building.** A run that cannot push its work away builds
-  nothing: step 1 tests the push itself, before the first branch is cut.
-- **Never force-push, never rewrite published history.**
-
-## 1. Prepare the run
+## 1. Prepare
 
 ```bash
 MAIN=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD | sed 's|^origin/||')
-git status --porcelain                  # must be empty
-git rev-parse -q --verify MERGE_HEAD    # must print nothing
-git fetch origin --prune
-git switch "$MAIN" && git merge --ff-only "origin/$MAIN"
+git status --porcelain && git rev-parse -q --verify MERGE_HEAD   # both must print nothing
+git fetch origin --prune && git switch "$MAIN" && git merge --ff-only "origin/$MAIN"
+git push origin "$MAIN"     # push probe: must say "Everything up-to-date"
 ```
 
-If `$MAIN` comes back empty, try `git remote set-head origin --auto`, else fall back
-to whichever of `origin/main` / `origin/master` exists - and ask the user if both do.
-Use whatever `git remote` reports if it is not `origin`.
+`$MAIN` empty - `git remote set-head origin --auto`, else whichever of main/master exists
+(ask if both). If the push probe is refused, build nothing: report what refused it and what
+would clear it (an agent settings rule pre-approving push and merge with no ask/deny rule
+for them; pushes named explicitly in the user's request; missing credentials).
 
-Stop and report if the tree is dirty, a merge or rebase is in progress, or the
-fast-forward is refused. Never stash, reset or force on your own initiative.
-
-### Prove the run can push
-
-A night run that cannot push is a night lost: every spec is built in a container that
-is reclaimed, and unpushed commits go with it. Prove the push while proving it is
-free - with `$MAIN` already up to date, pushing it changes nothing on the remote but
-still passes through every gate a real push would:
-
-```bash
-git push origin "$MAIN"                 # expect: Everything up-to-date
-```
-
-Reporting the branch already up to date is the pass; anything that refuses the
-command is the fail - a permission rule, an agent's own safety gate, a missing
-credential, a protected branch. **On a fail, stop the run here and build nothing.**
-Report what refused the push and what would clear it, so the next attempt starts from
-a repository that can land its work:
-
-- a rule in the calling repository's own agent settings that pre-approves the
-  commands a landing needs - a push and a merge - and no rule that asks about them or
-  denies them, since a denial outranks an approval and a question nobody is awake to
-  answer denies by default
-- the pushes named in the user's own words when the run starts, where the gate reads
-  the transcript: a general request to work the queue is not a stated intent to push
-- credentials for the remote, where those are what is missing
-
-Take the build and test commands from the repository's own instructions
-(`CLAUDE.md`, `AGENTS.md`, `README`, `package.json`, `Makefile`, CI workflows) and
-its own package manager; the subagents need them, and a repository that documents
-none is said so in the report rather than invented for. Check the CI config for what
-pushing `$MAIN` triggers: **if it deploys, say so in the message that carries the
-question** - a night run pushes the main branch once per landed spec, so a tick is a
-deploy.
+Find the build/test commands in the repo's own docs and manifest. Check whether CI deploys
+on a push to `$MAIN`.
 
 ## 2. Build the queue
 
-A spec is implemented when a file in `docs/impl/` carries the **same feature name**,
-whatever its date prefix. The candidates are the rest, oldest first by the date their
-spec was **first committed** - not by the date in the filename, which is the day the
-spec was written and not the order the user queued them in:
+Unimplemented specs (no `docs/impl/` file with the same slug), oldest **first commit** first
+(not the filename date); uncommitted specs sort last:
 
 ```bash
 for spec in docs/specs/[0-9][0-9][0-9][0-9]-*.md; do
@@ -104,113 +50,37 @@ for spec in docs/specs/[0-9][0-9][0-9][0-9]-*.md; do
 done | sort
 ```
 
-A spec that has never been committed has no such date and sorts last. Read the
-`Status:` and `#` title line of each candidate - the option descriptions need them.
-If nothing survives, say so and stop.
+None - say so and stop.
 
-## 3. Ask once, then stop asking
+## 3. Ask once
 
-`AskUserQuestion` with `multiSelect: true`. Each option's `label` is the feature
-name, its `description` the spec's title, its first-commit date, and the words
-`Status: draft` where the spec was never marked agreed. A question holds 4 options
-and a call holds 4 questions: up to 4 candidates is one question; 5 to 16 split
-across up to 4 questions, **oldest first**, so the queue reads in the order it will
-be built; beyond 16, offer the 16 oldest and say how many were left out.
+`AskUserQuestion`, `multiSelect: true`; label = slug, description = title, first-commit
+date, `Status: draft` if not agreed. Up to 4 options per question, 4 questions per call,
+oldest first; beyond 16, say how many were omitted. In the same message state how many
+pushes to `$MAIN` the run implies, what they trigger (deploys!), that nothing else will be
+asked, and ask the user to confirm the pushes in their answer. End the turn. Build only
+ticked specs, in queue order.
 
-Alongside the question, state what the run will do: how many pushes of the main
-branch it implies, what those pushes trigger, and that from the answer on nothing
-else will be asked. Ask, in that same message, for the pushes to be confirmed in the
-answer - a gate that reads the transcript weighs what the user asked for, and a
-stated hesitation about pushing binds it until the user lifts it.
+## 4. Per spec
 
-**Then end the turn.** No default, no guess, no implementing. Silence, a timeout or
-an empty answer means build nothing - report that and stop. Only ticked specs are
-built, in the queue order of step 2, never in the order the answer came back.
-
-## 4. Implement and land each spec, one at a time
-
-For each spec in turn, from a main branch that already carries every spec landed
-before it:
-
-### 4a. Cut the branch
-
-```bash
-git switch "$MAIN"
-git switch -c "claude/<feature-name>-$(openssl rand -hex 3)"
-```
-
-The branch is **`claude/<feature-name>-<hash>`**, the spec's slug plus six random hex
-characters - that is `vjp-implement-spec`'s rule. Follow the repository's branch
-naming convention instead where it has one that says otherwise, and report the full
-branch name per spec.
-
-### 4b. Hand the spec to a subagent
-
-One fresh subagent per spec, so a long queue does not fill the run's own context.
-Give it, in the prompt and without relying on anything it cannot see:
-
-- the spec path, and that it follows `vjp-implement-spec` end to end - read the ground
-  the spec stands on, work the plan phase by phase, verify with the repository's own
-  checks, write `docs/impl/YYYY-MM-DD-feature-name.md`, commit on the branch
-- the branch it is on, that it stays there, and that it never merges into or touches
-  the main branch
-- **the replacement for one hard rule**: nobody is available to answer, so an
-  `AskUserQuestion` it would have asked is instead resolved on the most defensible
-  reading, implemented, and recorded in the notes' *Known problems* named as an
-  assumption. Every other hard rule of `vjp-implement-spec` stands - above all, never
-  re-deciding what the spec decided, never implementing what the spec puts out of
-  scope, and never reporting done on unverified work
-- what to report back, in a few lines: implemented in full or partially, the notes
-  path, the exact result of each check it ran, every assumption it made, and whether
-  it pushed the branch
-
-Wait for it to finish before doing anything else. A subagent that dies or comes back
-empty is a failed spec - do not retry it.
-
-### 4c. Decide, then land or leave
-
-The spec lands only if all of these hold. Verify them yourself; do not take the
-report's word for it:
-
-```bash
-git status --porcelain                       # clean
-ls docs/impl/*-<feature-name>.md             # the notes exist
-git log --oneline "$MAIN"..HEAD              # there is work on the branch
-```
-
-plus the subagent reporting the repository's own checks green. If any fails, leave
-the branch exactly as it stands, push it so the night is not lost, record the spec as
-not landed with the reason, and go to the next spec - the main branch has not moved,
-so the next branch is cut from unchanged ground.
-
-Otherwise land it:
-
-```bash
-git push -u origin <branch>
-git switch "$MAIN"
-git merge --no-ff --no-edit <branch>
-git push origin "$MAIN"
-```
-
-`--no-ff` keeps each spec one identifiable merge commit. The merge cannot conflict -
-the branch was cut from `$MAIN` and nothing else has moved it. If it does, or if
-either push is rejected, someone else advanced the main branch during the run:
-`git merge --abort`, leave the branch pushed, record it as not landed, and carry on
-with the next spec from a re-fetched main branch. Never force, never resolve blind.
-
-Retry a push that failed on a network error up to 4 times, backing off 2s, 4s, 8s,
-16s. A rejected push is not a network error, and neither is one a permission gate
-refused - that spec does not land, and the run carries on with the next.
+1. `git switch "$MAIN" && git switch -c "claude/<slug>-$(openssl rand -hex 3)"`.
+2. Hand it to a **fresh subagent** with: the spec path; follow `vjp-implement-spec` end to
+   end (notes in `docs/impl/`, commits on this branch); stay on the branch, never touch
+   `$MAIN`; instead of asking, decide and record assumptions in *Known problems* (all other
+   rules stand); report status, notes path, exact check results, assumptions. A dead or
+   empty subagent is a failed spec - no retry.
+3. Verify yourself: clean tree, notes file exists, `git log "$MAIN"..HEAD` non-empty,
+   checks reported green. If not - push the branch, record not landed, next spec.
+4. Land:
+   ```bash
+   git push -u origin <branch>
+   git switch "$MAIN" && git merge --no-ff --no-edit <branch>
+   git push origin "$MAIN"
+   ```
+   Conflict or rejected push - `git merge --abort`, leave branch pushed, record not landed,
+   re-fetch `$MAIN`, continue. Retry only network failures (4x: 2s, 4s, 8s, 16s).
 
 ## 5. Report
 
-One line per spec of the queue, in build order: landed with the merge commit and the
-notes path, or not landed with the branch it is on and what stopped it. Then, once:
-
-- every assumption the subagents made, and which spec each belongs to - this is where
-  the morning starts reading
-- what was pushed, and what those pushes triggered
-- the candidates the user left unticked
-
-Do not restate the implementation notes. They are in `docs/impl/`, one file per spec,
-and they are the record of what was built.
+Per spec in build order: landed (merge commit, notes path) or not (branch, reason). Then
+every assumption made per spec, what was pushed and triggered, and the unticked candidates.

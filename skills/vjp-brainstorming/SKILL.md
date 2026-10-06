@@ -5,240 +5,80 @@ description: Lead the user through high-level planning of a change - gather cont
 
 # Brainstorm a change into a specification
 
-This skill runs the **high-level planning phase** of a change, and nothing else. Its
-only deliverable is one document under `docs/specs/`. It produces no code, no
-refactor, no task breakdown and no implementation.
+Planning only. The single deliverable is `docs/specs/YYYY-MM-DD-feature-name.md`; no code.
+The spec records what **the user** decided, not what you would have decided.
 
-The value of the document is that it records **what the user decided and why**, not
-what you would have decided. Every important choice is put to the user through
-`AskUserQuestion` and answered by the user before the session moves on.
+## Rules
 
-## Hard rules
+- Write no source code. Create or switch no branch.
+- After every `AskUserQuestion` end the turn. Ambiguous answer - ask again; "Other" text is
+  the decision verbatim.
+- No implementation steps in the spec (files, signatures, commits, estimates).
+- Schema and persistent storage changes (tables, columns, indexes, migrations, files,
+  buckets, KV keys, browser storage of user data) are decisions, not detail: propose them
+  yourself and put them to the user. Only pure caches are exempt; when unsure, it is storage.
 
-- **Explicit invocation only.** A feature request, a bug report or a vague "what do
-  you think about X" is not an invocation. Only run when the user names
-  brainstorming.
-- **Never write or change source code during the session.** The only file you create
-  is the spec, and the only commit you make is the one that carries it.
-- **Never create or switch a branch.** The spec is committed and pushed on the
-  branch the checkout is already on - see step 4.
-- **Never continue past an unanswered question.** After an `AskUserQuestion` call
-  your turn ends - no further tool calls, no edits, no "meanwhile I will...".
-  Silence, elapsed time and an interruption are not answers.
-- **Never invent an answer.** If the user's reply is ambiguous, ask again rather
-  than picking the reading that suits you. If the user answers "Other" with free
-  text, that text is the decision, verbatim.
-- **Never put implementation steps in the spec.** File-by-file plans, function
-  signatures, commit sequences and effort estimates belong to a later phase.
-- **Database and persistent storage changes are not implementation detail.** A new
-  or changed table, column, index, collection or migration, and any new place the
-  change keeps data that outlives the process (a file, a bucket, a key in a key-value
-  store, browser storage holding user data), go into the spec and are put to the
-  user. A pure cache - data that can be thrown away and rebuilt without loss - is the
-  only exception.
+## Process
 
-## 1. Gather context first - no questions yet
+1. **Context first.** Read `CLAUDE.md`, the relevant code, existing `docs/specs/` and
+   `docs/`. State back what you understood and what exists, including whether the change
+   needs schema or storage changes.
+2. **Decide in rounds**, in dependency order (what it is -> where it lives -> storage ->
+   presentation). Ask about scope, which module it extends, data model and migration,
+   user-facing shape, deploy modes, backwards compatibility, what is deferred. Never ask
+   what the repository already decides. Each round: 2-4 options with trade-off
+   descriptions, recommendation first marked `(Recommended)`, at most 2-3 related decisions
+   per call. Typically 3-8 rounds.
+3. **Write the spec as you go** - append each round to *Decisions* right after the answer.
+   Get the date with `date +%F`. Name: 3-4 word kebab-case feature slug.
 
-Before the first question, learn enough that the questions are about real choices in
-this codebase and not about things the repo already answers.
-
-- Read `CLAUDE.md` and the `README.md` sections it points at for the area involved.
-- Read the code the change would touch, and any existing `docs/specs/*.md` or
-  `docs/*.md` covering the same ground - a superseded design document is context.
-- Check what already exists: half the requests are an extension of something built.
-
-Then state back, in a short paragraph, what you understood the request to be and what
-exists today. Ask the user for facts only when the repo cannot supply them (external
-constraints, deadlines, an API you have no access to).
-
-## 2. Settle the decisions, one round at a time
-
-Work through the open choices in dependency order - what the change **is** before
-where it lives, where it lives before how it is stored, how it is stored before how
-it is presented.
-
-Ask about things that change the shape of the result:
-
-- scope boundaries - what this change includes, and what it deliberately does not
-- which existing module the feature extends, versus a new one
-- data model, storage and schema choices, and migration of what exists - see
-  "Database and persistent storage" below
-- the user-facing shape - where the entry point is, what the user sees
-- which deploy modes and runtimes it must serve, and what a deployment that does not
-  serve it does instead
-- backwards compatibility, and what happens to data written by the old behaviour
-- what is deferred to a later change
-
-Do not spend a question on anything the repository already decides (conventions,
-naming, styling, package manager, test framework), nor on implementation detail.
-
-**Database and persistent storage.** Before you stop asking, work out whether the
-change needs the database structure modified or new persistent storage, and propose
-it yourself - do not wait for the user to raise it.
-
-- Look at the existing schema, migrations, models and storage code the change
-  touches, so the proposal fits what is there.
-- Propose concretely: each new or changed table, collection or file layout, with its
-  columns or fields, keys, relations and indexes; each new persistent store and what
-  it holds; how existing data is migrated, and whether the migration is reversible.
-- Put the proposal to the user through `AskUserQuestion` like any other decision,
-  with your design as the recommended option and a defensible alternative (another
-  shape, another store, or no persistence at all). One round per independent store
-  or schema area.
-- Leave out caches - data that can be dropped and rebuilt with no loss. When in doubt
-  whether something is only a cache, treat it as persistent storage and ask.
-- If the change needs neither, say so in one sentence when you state what you
-  understood, so the user can correct you.
-
-**Question quality:**
-
-- 2-4 options, mutually exclusive, each a choice someone could actually defend.
-- Every option gets a `description` naming its trade-off, not restating its label.
-- Put your recommendation first and mark it `(Recommended)`. Recommend one; do not
-  survey.
-- `header` is <= 12 characters.
-- Use `multiSelect` only when the options genuinely combine.
-- Group at most 2-3 tightly related decisions into one call. Independent decisions
-  get their own round, so an early answer can reshape the later question.
-
-Immediately after each answer comes back, append that round to the spec's
-**Decisions** section (see step 3) - the question, all offered options with their
-descriptions, and the answer. Do this while it is in front of you; do not
-reconstruct a whole session's questions from memory at the end.
-
-Stop asking when what is left is implementation detail. A typical session is three
-to eight rounds; more than that usually means you are asking about things the code
-already answers.
-
-## 3. Write the specification
-
-```bash
-date +%F        # the YYYY-MM-DD prefix - never guess today's date
-```
-
-Path: `docs/specs/YYYY-MM-DD-feature-name.md`, the name in lowercase kebab-case,
-three or four words describing the feature and not the request ("bulk-price-edit",
-not "user-wants-faster-prices"). Create the file once context is agreed and
-grow it through the session; do not wait until the end.
-
-The document contains exactly these sections:
+## Spec format
 
 ```markdown
 # <Feature name>
 
 Status: draft | agreed
 Date: YYYY-MM-DD
-Area: <modules / deploy modes the change touches>
+Area: <modules / deploy modes touched>
 
 ## Context of the change
-
-What exists today in this repository, what it does not do, and why that is being
-changed now. Point at real files and README anchors. A reader who has never seen the
-conversation must be able to follow from here.
+What exists, what it lacks, why change now. Real files. Readable without the conversation.
 
 ## User request
-
-The user's own request, reformulated into one continuous text: all of their prompts
-across the session joined, tidied and ordered, with the noise removed.
-
-Nothing in this section may be information the user did not give. No inferred
-requirement, no invented constraint, no solution of yours, no scope you added. If two
-prompts contradict each other, keep both and note which came later.
+All of the user's prompts joined and tidied. Nothing the user did not say. Contradictions
+kept, later one noted.
 
 ## Decisions
-
-One subsection per AskUserQuestion round, in the order asked.
-
-### <the question, verbatim>
-
+### <question verbatim>
 | Option | What it means |
 |---|---|
-| <label> | <the description offered> |
-| <label> | <the description offered> |
-
-**Answer: <the option the user chose, or their free text>** - plus any reasoning the
-user gave. If the user chose "Other", record their words, not a paraphrase.
+| ... | ... |
+**Answer: <choice or free text verbatim>** - plus the user's reasoning.
 
 ## High-level plan
-
-The change described as a handful of phases or workstreams, each with what it
-delivers and what it depends on. Prose and headings, not a task list, no file names,
-no ordering finer than "this before that".
+A few phases/workstreams in prose, what each delivers and depends on. No file names.
 
 ## Database and persistent storage
-
-Every schema change and every new persistent store the change introduces, as agreed
-with the user - caches excluded. For each one: what it is (table, collection, file,
-bucket, key, browser storage), its structure (columns or fields with types, keys,
-relations, indexes), what it holds and who writes and reads it, how long data lives
-there, and how existing data is migrated. A table per store reads best. This section
-is for the user to review before agreeing to the work; it is not implementation
-detail and is not left to a later phase.
+Per store: kind, structure (fields, types, keys, relations, indexes), what it holds, who
+reads/writes, lifetime, migration of existing data. Or one line saying nothing new is stored.
 
 ## Architecture decisions
-
-The parts that are expensive to change later: the seam between modules, the data
-structures and where they live (the schema itself is in the section above), which side of the client/worker split
-owns what, what gets a capability flag, what invariant a test has to enforce. State
-each decision and the reason it beat the alternative.
+Expensive-to-change choices and why each beat the alternative.
 
 ## Weaknesses and risks
-
-Honest and specific. For each: what could go wrong, how likely, what it costs, and
-what would reduce it. Include the questions deliberately left open and what has to
-happen before they can be answered.
+Specific: what, likelihood, cost, mitigation; open questions.
 
 ## Out of scope
-
-What this change explicitly does not do, so a later reader does not read the gaps as
-oversights.
 ```
 
-No section is dropped. If a section has nothing in it, say so in one line and say
-why - an empty "Weaknesses and risks" means you did not look, and an empty "Database
-and persistent storage" states that the change stores nothing new beyond caches.
+No section dropped; an empty one says why in one line. ASCII, present tense, under ~300 lines.
 
-Style: ASCII only, present tense, tables where a table reads better than prose, and
-keep it under roughly 300 lines. This is a document a person reads before agreeing to
-the work, not a transcript.
+## Hand back
 
-## 4. Hand back
-
-Link the spec, then summarise the decisions in a few lines. The link is a markdown
-link to the file by its path relative to the repository root, for example
-`[docs/specs/2026-01-31-bulk-price-edit.md](docs/specs/2026-01-31-bulk-price-edit.md)`,
-so it is clickable in the terminal and in the web and desktop apps.
-
-Also open the spec for the user to read. When the session offers a tool that sends a
-file to the user and renders it in the side panel (for example `SendUserFile` with
-`display: "render"` in Claude Code on the web), send the spec file through it so it
-opens in the panel next to the conversation. Do not publish the spec to an external
-service for this - the file in the repository is the specification. Without such a
-tool, the link is enough.
-
-Call out the "Database and persistent storage" section by name in the summary when
-it is not empty, so the user reviews it before agreeing.
-
-Say plainly that this is the planning phase and that implementation is a separate step - do not start it,
-and do not offer to start it in the same breath as the summary.
-
-**Commit the spec on the branch the checkout is already on, and push that branch.**
-A brainstorming session cuts no branch of its own and names none: the working branch
-is whatever the session was started on, and that is where the spec goes. Do not
-switch, do not create, do not ask for a name. Commit the spec on its own, with a
-message naming the feature.
-
-```bash
-git add docs/specs/YYYY-MM-DD-feature-name.md
-git commit -m "docs: spec for <feature name>"
-git push                  # git push -u origin HEAD the first time, if there is no upstream yet
-```
-
-The spec gets a commit of its own - it never rides along in a code commit - and the
-push is part of the hand-back. Never force, never rewrite the branch.
-
-On a checkout sitting on the repository's main branch, do not commit: say the spec is
-written but uncommitted and let the user say where it goes.
-
-Taking the spec further - into the main branch, into a pull request, into code - is
-the caller's step.
+- Link the spec as a markdown link by repo-relative path; if a render-to-panel tool exists
+  (e.g. `SendUserFile` with `display: "render"`), send the file through it.
+- Summarise the decisions; call out *Database and persistent storage* when not empty.
+- Say implementation is a separate step; do not start or offer it.
+- Commit the spec alone (`docs: spec for <feature>`) on the **current** branch and push
+  (`-u origin HEAD` if no upstream). Never force. On the main branch, do not commit - say
+  it is uncommitted and let the user decide.
