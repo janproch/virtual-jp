@@ -1,6 +1,6 @@
 ---
 name: vjp-brainstorming
-description: Lead the user through high-level planning of a change - gather context, settle every important decision with AskUserQuestion, then write a specification to docs/specs/YYYY-MM-DD-feature-name.md. Use ONLY when the user explicitly asks for it ("brainstorm", "brainstorming", "use the brainstorming skill", "let's brainstorm this"). Never start it on your own from an ordinary feature request.
+description: Lead the user through high-level planning of a change - gather context, settle every important decision with AskUserQuestion, then write a specification to docs/specs/YYYY-MM-DD-feature-name.md, including any database or persistent storage changes for the user to review, and link it in the hand-back. Use ONLY when the user explicitly asks for it ("brainstorm", "brainstorming", "use the brainstorming skill", "let's brainstorm this"). Never start it on your own from an ordinary feature request.
 ---
 
 # Brainstorm a change into a specification
@@ -30,6 +30,12 @@ what you would have decided. Every important choice is put to the user through
   text, that text is the decision, verbatim.
 - **Never put implementation steps in the spec.** File-by-file plans, function
   signatures, commit sequences and effort estimates belong to a later phase.
+- **Database and persistent storage changes are not implementation detail.** A new
+  or changed table, column, index, collection or migration, and any new place the
+  change keeps data that outlives the process (a file, a bucket, a key in a key-value
+  store, browser storage holding user data), go into the spec and are put to the
+  user. A pure cache - data that can be thrown away and rebuilt without loss - is the
+  only exception.
 
 ## 1. Gather context first - no questions yet
 
@@ -55,7 +61,8 @@ Ask about things that change the shape of the result:
 
 - scope boundaries - what this change includes, and what it deliberately does not
 - which existing module the feature extends, versus a new one
-- data model, storage and schema choices, and migration of what exists
+- data model, storage and schema choices, and migration of what exists - see
+  "Database and persistent storage" below
 - the user-facing shape - where the entry point is, what the user sees
 - which deploy modes and runtimes it must serve, and what a deployment that does not
   serve it does instead
@@ -64,6 +71,24 @@ Ask about things that change the shape of the result:
 
 Do not spend a question on anything the repository already decides (conventions,
 naming, styling, package manager, test framework), nor on implementation detail.
+
+**Database and persistent storage.** Before you stop asking, work out whether the
+change needs the database structure modified or new persistent storage, and propose
+it yourself - do not wait for the user to raise it.
+
+- Look at the existing schema, migrations, models and storage code the change
+  touches, so the proposal fits what is there.
+- Propose concretely: each new or changed table, collection or file layout, with its
+  columns or fields, keys, relations and indexes; each new persistent store and what
+  it holds; how existing data is migrated, and whether the migration is reversible.
+- Put the proposal to the user through `AskUserQuestion` like any other decision,
+  with your design as the recommended option and a defensible alternative (another
+  shape, another store, or no persistence at all). One round per independent store
+  or schema area.
+- Leave out caches - data that can be dropped and rebuilt with no loss. When in doubt
+  whether something is only a cache, treat it as persistent storage and ask.
+- If the change needs neither, say so in one sentence when you state what you
+  understood, so the user can correct you.
 
 **Question quality:**
 
@@ -140,10 +165,20 @@ The change described as a handful of phases or workstreams, each with what it
 delivers and what it depends on. Prose and headings, not a task list, no file names,
 no ordering finer than "this before that".
 
+## Database and persistent storage
+
+Every schema change and every new persistent store the change introduces, as agreed
+with the user - caches excluded. For each one: what it is (table, collection, file,
+bucket, key, browser storage), its structure (columns or fields with types, keys,
+relations, indexes), what it holds and who writes and reads it, how long data lives
+there, and how existing data is migrated. A table per store reads best. This section
+is for the user to review before agreeing to the work; it is not implementation
+detail and is not left to a later phase.
+
 ## Architecture decisions
 
 The parts that are expensive to change later: the seam between modules, the data
-structures and where they live, the schema, which side of the client/worker split
+structures and where they live (the schema itself is in the section above), which side of the client/worker split
 owns what, what gets a capability flag, what invariant a test has to enforce. State
 each decision and the reason it beat the alternative.
 
@@ -160,7 +195,8 @@ oversights.
 ```
 
 No section is dropped. If a section has nothing in it, say so in one line and say
-why - an empty "Weaknesses and risks" means you did not look.
+why - an empty "Weaknesses and risks" means you did not look, and an empty "Database
+and persistent storage" states that the change stores nothing new beyond caches.
 
 Style: ASCII only, present tense, tables where a table reads better than prose, and
 keep it under roughly 300 lines. This is a document a person reads before agreeing to
@@ -168,8 +204,22 @@ the work, not a transcript.
 
 ## 4. Hand back
 
-Report the path, then summarise the decisions in a few lines. Say plainly that this
-is the planning phase and that implementation is a separate step - do not start it,
+Link the spec, then summarise the decisions in a few lines. The link is a markdown
+link to the file by its path relative to the repository root, for example
+`[docs/specs/2026-01-31-bulk-price-edit.md](docs/specs/2026-01-31-bulk-price-edit.md)`,
+so it is clickable in the terminal and in the web and desktop apps.
+
+Also open the spec for the user to read. When the session offers a tool that sends a
+file to the user and renders it in the side panel (for example `SendUserFile` with
+`display: "render"` in Claude Code on the web), send the spec file through it so it
+opens in the panel next to the conversation. Do not publish the spec to an external
+service for this - the file in the repository is the specification. Without such a
+tool, the link is enough.
+
+Call out the "Database and persistent storage" section by name in the summary when
+it is not empty, so the user reviews it before agreeing.
+
+Say plainly that this is the planning phase and that implementation is a separate step - do not start it,
 and do not offer to start it in the same breath as the summary.
 
 **Commit the spec on the branch the checkout is already on, and push that branch.**

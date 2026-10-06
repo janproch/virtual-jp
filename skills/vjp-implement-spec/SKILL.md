@@ -10,8 +10,8 @@ The plan is a document under `docs/specs/`, normally written by the
 `vjp-brainstorming` skill. This skill turns exactly that document into code, and
 records what really happened in `docs/impl/`.
 
-The spec is the authority. Its **Decisions** and **Architecture decisions** were
-settled with the user and are not reopened here.
+The spec is the authority. Its **Decisions**, **Database and persistent storage** and
+**Architecture decisions** were settled with the user and are not reopened here.
 
 ## Hard rules
 
