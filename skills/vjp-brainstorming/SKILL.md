@@ -20,8 +20,8 @@ what you would have decided. Every important choice is put to the user through
   brainstorming.
 - **Never write or change source code during the session.** The only file you create
   is the spec, and the only commit you make is the one that carries it.
-- **Never create a branch.** The spec is committed and pushed on the repository's
-  main branch - see step 4. Branches belong to the implementation phase.
+- **Never create or switch a branch.** The spec is committed and pushed on the
+  branch the checkout is already on - see step 4.
 - **Never continue past an unanswered question.** After an `AskUserQuestion` call
   your turn ends - no further tool calls, no edits, no "meanwhile I will...".
   Silence, elapsed time and an interruption are not answers.
@@ -172,26 +172,23 @@ Report the path, then summarise the decisions in a few lines. Say plainly that t
 is the planning phase and that implementation is a separate step - do not start it,
 and do not offer to start it in the same breath as the summary.
 
-**Commit the spec on the main branch and push it there.** A brainstorming session
-creates no branch of its own: the spec is a document about work that has not started,
-so it belongs where everyone reads it, not on a branch nobody has merged. Switch to
-the repository's main branch (`master` or `main`, whatever it uses), take it up to
-date, commit the spec on its own with a message naming the feature, and push.
+**Commit the spec on the branch the checkout is already on, and push that branch.**
+A brainstorming session cuts no branch of its own and names none: the working branch
+is whatever the session was started on, and that is where the spec goes. Do not
+switch, do not create, do not ask for a name. Commit the spec on its own, with a
+message naming the feature.
 
 ```bash
-git switch <main>          # master or main, whatever the repository uses
-git pull --ff-only
 git add docs/specs/YYYY-MM-DD-feature-name.md
 git commit -m "docs: spec for <feature name>"
-git push
+git push                  # git push -u origin HEAD the first time, if there is no upstream yet
 ```
 
-A spec never rides along in a code commit, and never waits on a branch for an
-implementation that may never come. If the session started on a feature branch, say
-in the hand-back that the spec went to the main branch and the branch is untouched.
-If the repository forbids pushing to its main branch, stop there: report that the
-spec is written but not pushed and let the user say where it should go - do not
-invent a branch for it.
+The spec gets a commit of its own - it never rides along in a code commit - and the
+push is part of the hand-back. Never force, never rewrite the branch.
 
-The implementation phase is what cuts a branch, from a main branch that already
-carries this spec - `vjp-implement-spec` names it `claude/<feature-name>-<hash>`.
+On a checkout sitting on the repository's main branch, do not commit: say the spec is
+written but uncommitted and let the user say where it goes.
+
+Taking the spec further - into the main branch, into a pull request, into code - is
+the caller's step.
