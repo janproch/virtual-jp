@@ -10,7 +10,7 @@
     {
       "name": "virtual-jp",
       "source": "./",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "description": "Plan a change into a specification, then implement that specification and record what really happened.",
       "category": "workflow"
     }

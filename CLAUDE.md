@@ -26,6 +26,11 @@ no application code - the deliverable is the skill instructions themselves.
   assumed language or package manager - a skill takes those from the target repository's
   own `CLAUDE.md` and manifest.
 - Instructions are imperative and addressed to the agent running the skill.
+- Keep skills compact. Write only what Claude Code would not do on its own: rules that
+  differ from its defaults, required file formats and paths, naming, workflow order, and
+  non-obvious commands. Leave out rationale, restated warnings, generic good practice
+  ("read the code", "run the tests", "resolve conflicts carefully") and explanations of
+  standard git or tooling behaviour. One line per rule; aim for well under ~100 lines.
 - ASCII only, present tense.
 - A skill stands alone: it may reference another skill by name, but must not require it.
 - Every skill directory is named `vjp-*`. This is not cosmetic: `vjp-update-virtual-jp`
