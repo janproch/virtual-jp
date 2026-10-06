@@ -11,7 +11,7 @@ recorded - the user's and yours.
 
 ## Rules
 
-- Write no source code. Create no branch.
+- Write no source code. Create or switch no branch.
 - After every `AskUserQuestion` end the turn. "Other" text is the decision verbatim.
 - No implementation steps in the spec.
 - Never hide a decision you took: it goes in *Decisions*, marked as yours.
@@ -70,9 +70,10 @@ No section dropped; an empty one says why. ASCII, present tense, under ~300 line
 
 ## Hand back
 
-- Report the path; summarise which decisions the user made and which you made; name the
-  2-3 of yours most likely to be overturned. Say implementation is separate; do not start it.
-- Commit and push the spec on the **main branch**: `git switch <main> && git pull --ff-only`,
-  commit the spec alone (`docs: spec for <feature>`), push. If the session started on
-  another branch, say it is untouched. If pushing to main is forbidden, stop and report -
-  do not invent a branch.
+- Link the spec as a markdown link by repo-relative path; if a render-to-panel tool exists
+  (e.g. `SendUserFile` with `display: "render"`), send the file through it.
+- Summarise which decisions the user made and which you made; name the 2-3 of yours most
+  likely to be overturned. Say implementation is separate; do not start or offer it.
+- Commit the spec alone (`docs: spec for <feature>`) on the **current** branch and push
+  (`-u origin HEAD` if no upstream). Never force. On the main branch, do not commit - say
+  it is uncommitted and let the user decide.
