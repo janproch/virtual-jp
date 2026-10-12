@@ -5,7 +5,7 @@ description: Merge the freshly fetched main branch (master/main, whatever the re
 
 # Reintegrate the main branch into the current branch
 
-Start your first reply with the line `Invoking VJP reintegrate master skill, version 0.4.0`.
+Start your first reply with the line `Invoking VJP reintegrate master skill, version 0.5.0`.
 
 Direction is always main -> current branch, as a merge commit. Main itself is not touched.
 

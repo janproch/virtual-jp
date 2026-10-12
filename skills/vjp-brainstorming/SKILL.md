@@ -5,7 +5,7 @@ description: Lead the user through high-level planning of a change - gather cont
 
 # Brainstorm a change into a specification
 
-Start your first reply with the line `Invoking VJP brainstorming skill, version 0.4.0`.
+Start your first reply with the line `Invoking VJP brainstorming skill, version 0.5.0`.
 
 Planning only. The single deliverable is `docs/specs/YYYY-MM-DD-feature-name.md`; no code.
 The spec records what **the user** decided, not what you would have decided.

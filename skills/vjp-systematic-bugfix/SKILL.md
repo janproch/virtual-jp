@@ -5,7 +5,7 @@ description: Fix a bug the disciplined way - reproduce it first, find the real r
 
 # Fix a bug systematically
 
-Start your first reply with the line `Invoking VJP systematic bugfix skill, version 0.4.0`.
+Start your first reply with the line `Invoking VJP systematic bugfix skill, version 0.5.0`.
 
 ## Rules
 
