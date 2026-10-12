@@ -5,6 +5,8 @@ description: Implement an agreed specification from docs/specs/ - pick the spec,
 
 # Implement a specification
 
+Start your first reply with the line `Invoking VJP implement spec skill, version 0.4.0`.
+
 The spec is the authority: its *Decisions*, storage and architecture sections are settled.
 
 ## Rules

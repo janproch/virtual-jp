@@ -30,6 +30,9 @@ Same string in `.claude-plugin/plugin.json` (top-level `version`) and
 - **minor** - skill added, or a skill's behaviour changes
 - **patch** - wording, docs, README
 
+Write the same version into the `Invoking VJP ... skill, version X.Y.Z` banner line of
+every `skills/*/SKILL.md`.
+
 State the level and why; ask only if the branch genuinely straddles two levels.
 
 ## 4. Checks
@@ -44,10 +47,14 @@ plugin = json.load(open('.claude-plugin/plugin.json'))['version']
 market = [p for p in json.load(open('.claude-plugin/marketplace.json'))['plugins']
           if p['name'] == 'virtual-jp'][0].get('version')
 print('versions match' if plugin == market else f'MISMATCH: {plugin} vs {market}')
+banner = re.compile(r'^Start your first reply with the line `Invoking VJP .+ skill, version (\S+)`\.$', re.M)
 readme = pathlib.Path('README.md').read_text()
 for d in sorted(pathlib.Path('skills').iterdir()):
-    name = re.search(r'^name:\s*(\S+)', (d / 'SKILL.md').read_text(), re.M).group(1)
+    text = (d / 'SKILL.md').read_text()
+    name = re.search(r'^name:\s*(\S+)', text, re.M).group(1)
+    shown = banner.search(text)
     print(d.name,
+          'banner ok' if shown and shown.group(1) == plugin else 'BANNER MISSING OR STALE',
           'name ok' if name == d.name else f'NAME MISMATCH: {name}',
           'prefix ok' if d.name.startswith('vjp-') else 'PREFIX MISSING',
           'in README' if f'skills/{d.name}/SKILL.md' in readme else 'NOT IN README')
@@ -59,7 +66,7 @@ Fix anything failing before merging.
 ## 5. Commit, merge, push
 
 ```bash
-git add .claude-plugin/plugin.json .claude-plugin/marketplace.json
+git add .claude-plugin/plugin.json .claude-plugin/marketplace.json skills
 git commit -m "chore: release v<version>"
 git switch "$MAIN" && git merge --ff-only "origin/$MAIN"
 git merge --no-ff --no-edit <branch>

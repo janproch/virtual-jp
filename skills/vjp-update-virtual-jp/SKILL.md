@@ -5,6 +5,8 @@ description: Refresh this repository's vendored copies of JP's virtual-jp skills
 
 # Update the vendored virtual-jp skills
 
+Start your first reply with the line `Invoking VJP update virtual-jp skill, version 0.4.0`.
+
 Wholesale replacement from `https://github.com/janproch/virtual-jp`: delete every `vjp-*`
 entry under `.claude/`, copy in what its `manifest.json` lists. There is no record of the
 previous install - removal works purely by the `vjp-` name, so a dropped skill disappears.
