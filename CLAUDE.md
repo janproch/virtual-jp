@@ -33,6 +33,11 @@ no application code - the deliverable is the skill instructions themselves.
   standard git or tooling behaviour. One line per rule; aim for well under ~100 lines.
 - ASCII only, present tense.
 - A skill stands alone: it may reference another skill by name, but must not require it.
+- Right below its `#` heading every skill carries the banner line
+  ``Start your first reply with the line `Invoking VJP <skill> skill, version X.Y.Z`.``
+  where `<skill>` is the directory name without `vjp-` and with spaces for dashes (except
+  `virtual-jp`), and `X.Y.Z` is the plugin version. The version is written literally because
+  a vendored copy under `.claude/skills/` has no `plugin.json` to read it from.
 - Every skill directory is named `vjp-*`. This is not cosmetic: `vjp-update-virtual-jp`
   copies skills into a calling repository's `.claude/` and removes what this repository
   no longer ships by sweeping every `vjp-*` entry there, with no record of the previous
@@ -43,10 +48,10 @@ no application code - the deliverable is the skill instructions themselves.
 
 ## Versioning and merging to the main branch
 
-- The plugin version lives in two places and the two must always be equal:
-  `.claude-plugin/plugin.json` (top-level `version`) and `.claude-plugin/marketplace.json`
-  (`version` on the `virtual-jp` entry in `plugins`).
-- Every merge to the main branch bumps that version in both files. Major when a shipped
+- The plugin version lives in `.claude-plugin/plugin.json` (top-level `version`),
+  `.claude-plugin/marketplace.json` (`version` on the `virtual-jp` entry in `plugins`) and
+  the banner line of every `skills/*/SKILL.md`; all must always be equal.
+- Every merge to the main branch bumps that version everywhere. Major when a shipped
   skill is removed or renamed or `manifest.json` changes what it installs; minor when a
   skill is added or an existing one changes behaviour; patch for wording and
   documentation.
@@ -67,5 +72,6 @@ There is no build and no test suite. After changing anything:
 - Every directory under `skills/` is named `vjp-*`, so the sweep in
   `vjp-update-virtual-jp` can remove it again.
 - `README.md` lists exactly the skills present in `skills/`.
-- The `version` in `.claude-plugin/plugin.json` and the one in
-  `.claude-plugin/marketplace.json` are the same string.
+- The `version` in `.claude-plugin/plugin.json`, the one in
+  `.claude-plugin/marketplace.json` and the one in every skill's banner line are the same
+  string.
