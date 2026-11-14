@@ -5,7 +5,7 @@ description: Design a change into a specification with as few questions as possi
 
 # Design a change into a specification
 
-Start your first reply with the line `Invoking VJP design feature skill, version 0.5.0`.
+Start your first reply with the line `Invoking VJP design feature skill, version 0.6.0`.
 
 Planning only. Produces the same `docs/specs/YYYY-MM-DD-feature-name.md` as
 `vjp-brainstorming`, but asks as few questions as possible. Every decision is still

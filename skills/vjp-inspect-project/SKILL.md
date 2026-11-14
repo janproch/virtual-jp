@@ -5,7 +5,7 @@ description: Inspect a project along four axes - the language and technology sta
 
 # Inspect a project
 
-Start your first reply with the line `Invoking VJP inspect project skill, version 0.5.0`.
+Start your first reply with the line `Invoking VJP inspect project skill, version 0.6.0`.
 
 Read-only review along four axes - stack, deployment, documentation, tests - published as
 one HTML artifact.

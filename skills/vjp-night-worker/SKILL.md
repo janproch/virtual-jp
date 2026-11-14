@@ -5,7 +5,7 @@ description: Work a queue of specifications unattended - ask once which of the n
 
 # Work the spec queue overnight
 
-Start your first reply with the line `Invoking VJP night worker skill, version 0.5.0`.
+Start your first reply with the line `Invoking VJP night worker skill, version 0.6.0`.
 
 One question up front, then no more - nobody is awake to answer. Specs are built strictly
 sequentially, each on its own branch cut from the current main branch and landed before
