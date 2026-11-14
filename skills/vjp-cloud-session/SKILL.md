@@ -5,7 +5,7 @@ description: Make sure a Claude Code cloud session does not start working on a s
 
 # Cloud session start: refuse to work on a stale branch
 
-Start your first reply with the line `Invoking VJP cloud session skill, version 0.5.0`.
+Start your first reply with the line `Invoking VJP cloud session skill, version 0.6.0`.
 
 Run this before touching the first prompt's task. Fast-forward only: never merge, rebase,
 reset over own commits, stash or force. Afterwards carry on with the first prompt.

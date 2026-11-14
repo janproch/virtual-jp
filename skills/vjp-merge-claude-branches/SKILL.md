@@ -5,7 +5,7 @@ description: Find unmerged claude/* branches with commits in the last two weeks,
 
 # Merge claude/* branches into the main branch
 
-Start your first reply with the line `Invoking VJP merge claude branches skill, version 0.5.0`.
+Start your first reply with the line `Invoking VJP merge claude branches skill, version 0.6.0`.
 
 Per chosen branch: main -> branch (resolve, verify), then branch -> main. One at a time.
 
