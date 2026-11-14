@@ -22,9 +22,11 @@ really happened.
 | [`vjp-update-virtual-jp`](skills/vjp-update-virtual-jp/SKILL.md) | maintain | Refreshes a repository's vendored copies of these skills from this repository, removes the ones no longer shipped, and commits and pushes the result on the main branch. |
 | [`vjp-reintegrate-master`](skills/vjp-reintegrate-master/SKILL.md) | integrate | Merges the freshly fetched main branch into the current feature branch, resolves the conflicts, runs the repository's own checks and commits the merge. |
 | [`vjp-merge-claude-branches`](skills/vjp-merge-claude-branches/SKILL.md) | integrate | Lists unmerged `claude/*` branches from the last two weeks, asks which to land, then for each one merges the main branch in, verifies it, and merges it back. |
+| [`vjp-cloud-session`](skills/vjp-cloud-session/SKILL.md) | session | Runs at the start of every Claude Code cloud session, before the first prompt: fetches, checks whether the local branch is behind its remote (or behind the branch the work is based on), fast-forwards it when that is safe and otherwise asks, so the session never works on a weeks-old checkout. |
 
-All of them are invoked explicitly. None starts on its own from an ordinary feature
-request.
+All of them except `vjp-cloud-session` are invoked explicitly; none of those starts on
+its own from an ordinary feature request. `vjp-cloud-session` is meant to load by itself at
+the start of every cloud session (`CLAUDE_CODE_REMOTE=true`) and never in a local one.
 
 ## Install
 
